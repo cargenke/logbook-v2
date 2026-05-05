@@ -6,9 +6,7 @@ use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -16,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Log;
 use UnitEnum;
 
 class BulkRequest extends Page implements HasTable
@@ -64,7 +63,7 @@ class BulkRequest extends Page implements HasTable
                 // optional filters
             ])
             ->actions([
-               
+
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
@@ -88,8 +87,7 @@ class BulkRequest extends Page implements HasTable
                         ->directory('bulk-uploads')
                         ->preserveFilenames(),
                 ])
-                ->action(function (array $data) {
-
+                ->action(function (Action $action, array $data) {
 
                     validator($data, [
                         'file' => [
@@ -101,19 +99,28 @@ class BulkRequest extends Page implements HasTable
 
                     $filePath = $data['file'];
 
+                    try {
+                        UploadProcessLog::create([
+                            'name'      => "Request Upload",
+                            'file_path' => $filePath,
+                            'user_id'   => auth()->id(),
+                            'status'    => 1, // Processing
+                        ]);
 
+                        Notification::make()
+                            ->title('Upload started successfully')
+                            ->success()
+                            ->send();
 
-                    UploadProcessLog::create([
-                        'name' => "Request Upload",
-                        'file_path' => $filePath,
-                        'user_id' => auth()->id(),
-                        'status' => 1, // Processing
-                    ]);
+                        $action->success();
+                    } catch (\Throwable $th) {
+                        Log::info("Error uploading file: " . $th->getMessage());
+                        Notification::make()
+                            ->title('Failed to start upload process')
+                            ->danger()
+                            ->send();
+                    }
 
-                    Notification::make()
-                        ->title('Upload started successfully')
-                        ->success()
-                        ->send();
                 })
                 ->modalHeading('Upload Bulk File')
                 ->modalSubmitActionLabel('Upload')
