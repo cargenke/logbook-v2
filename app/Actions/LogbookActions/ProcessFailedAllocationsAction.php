@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Actions\LogbookActions;
 
-use Carbon\Carbon;
 use App\Models\Logbook;
 use App\Models\LogbookProfile;
 use App\Models\UploadedDataLog;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class ProcessFailedAllocationsAction
@@ -16,7 +15,7 @@ class ProcessFailedAllocationsAction
         $this->chasisNumber = $chasisNumber;
     }
 
-    function handle()
+    public function handle()
     {
         $chasisNumber = $this->chasisNumber;
 
@@ -25,10 +24,9 @@ class ProcessFailedAllocationsAction
             ->where('status', 'Failed')
             ->first();
 
-        if (!$log) {
+        if (! $log) {
             return false;
         }
-
 
         Log::info('(DONE ON SALES/STOCK SYNC) Handling Failed Allocation For : ' . $chasisNumber . ' ' . $log?->regNumber);
 
@@ -45,34 +43,33 @@ class ProcessFailedAllocationsAction
             ->whereNull('regNumber')
             ->first();
 
-
         if ($LogbookProfileWithNull) {
             $updateValues = true;
         }
 
-        if (!$updateValues) {
+        if (! $updateValues) {
             return false;
         }
 
         Logbook::where('chasisNumber', $chasisNumber)
             ->update([
-                'regNumber' => $log->regNumber
+                'regNumber' => $log->regNumber,
             ]);
 
         LogbookProfile::where('chasisNumber', $chasisNumber)
             ->update([
-                'regNumber' => $log?->regNumber
+                'regNumber' => $log?->regNumber,
             ]);
 
         UploadedDataLog::create(
             [
-                'name' => 'Received LogBook/Allocation',
+                'name'         => 'Received LogBook/Allocation',
                 'chasisNumber' => $chasisNumber,
-                'regNumber' => $log?->regNumber,
-                'status' => 'Success',
-                'remarks' => 'Allocation Successfull',
-                'createdOn' => Carbon::now(),
-                'createdBy' => 1
+                'regNumber'    => $log?->regNumber,
+                'status'       => 'Success',
+                'remarks'      => 'Allocation Successfull',
+                'createdOn'    => Carbon::now(),
+                'createdBy'    => 1,
             ]
         );
 

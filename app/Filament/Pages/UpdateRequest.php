@@ -15,7 +15,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use UnitEnum;
 
 class UpdateRequest extends Page implements HasTable
@@ -36,13 +35,12 @@ class UpdateRequest extends Page implements HasTable
             ->query($this->getBaseQuery()) // your model here
             ->columns([
                 TextColumn::make('creator.name')
-                    ->label('Uploaded By')
+                    ->label('Requested By')
                     ->searchable(),
                 TextColumn::make('name')
                     ->label('Chassis Number'),
                 TextColumn::make('file_name')
-                    ->label('File Name')
-                    ->dateTime(),
+                    ->label('Reg Number'),
 
                 TextColumn::make('status')
                     ->label('Status')
@@ -64,21 +62,10 @@ class UpdateRequest extends Page implements HasTable
             ])
             ->defaultSort('id', 'desc')
             ->filters([
-                // optional filters
+
             ])
             ->actions([
 
-                Action::make('download')
-                    ->label('Download')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->visible(fn($record) => $record->file_name !== null)
-                    ->url(function ($record) {
-                        return Storage::disk('s3')->temporaryUrl(
-                            $record->file_name,
-                            now()->addMinutes(10)
-                        );
-                    })
-                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
@@ -89,7 +76,7 @@ class UpdateRequest extends Page implements HasTable
     {
         return [
             Action::make('upload')
-                ->label('Upload File')
+                ->label('New Request')
                 ->icon('heroicon-o-arrow-up-tray')
                 ->form([
 
