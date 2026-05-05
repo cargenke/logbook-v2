@@ -84,14 +84,15 @@ class BulkRequest extends Page implements HasTable
                         ->rules([
                             'mimes:xls,xlsx',
                         ])
-                        ->directory('bulk-uploads')
-                        ->preserveFilenames(),
+                        ->directory('bulk-uploads'),
                 ])
                 ->action(function (array $data) {
 
                 
 
                     $filePath = $data['file'];
+
+                    Log::info("File uploaded to: " . $filePath);
 
                     try {
                      $data = UploadProcessLog::create([
@@ -103,6 +104,8 @@ class BulkRequest extends Page implements HasTable
                             'createdBy' => auth()->id(),
                         ]);
 
+
+                    Log::info("UploadProcessLog created with ID: " . $data->id);
   
                         Notification::make()
                             ->title('Upload started successfully')
