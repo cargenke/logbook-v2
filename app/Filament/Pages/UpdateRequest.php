@@ -6,7 +6,7 @@ use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -18,17 +18,17 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use UnitEnum;
 
-class BulkRequest extends Page implements HasTable
+class UpdateRequest extends Page implements HasTable
 {
 
     use InteractsWithTable;
-    protected string $view = 'filament.pages.bulk-request';
+    protected string $view = 'filament.pages.update-request';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowUpTray;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Pencil;
 
     protected static string|UnitEnum|null $navigationGroup = 'Logbook Management';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public function table(Table $table): Table
     {
@@ -38,8 +38,11 @@ class BulkRequest extends Page implements HasTable
                 TextColumn::make('creator.name')
                     ->label('Uploaded By')
                     ->searchable(),
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('createdOn')->dateTime(),
+                TextColumn::make('name')
+                    ->label('Chassis Number'),
+                TextColumn::make('file_name')
+                    ->label('File Name')
+                    ->dateTime(),
 
                 TextColumn::make('status')
                     ->label('Status')
@@ -90,28 +93,32 @@ class BulkRequest extends Page implements HasTable
                 ->icon('heroicon-o-arrow-up-tray')
                 ->form([
 
-                    FileUpload::make('file')
+                    TextInput::make('name')
+                        ->label('Chassis Number')
                         ->required()
-                        ->disk('s3')
                         ->rules([
-                            'mimes:xls,xlsx',
-                        ])
-                        ->directory('bulk-uploads'),
+                            'max:255',
+                        ]),
+
+                    TextInput::make('file_name')
+                        ->label('Reg Number')
+                        ->required()
+                        ->rules([
+                            'max:255',
+                        ]),
+
                 ])
                 ->action(function (array $data) {
 
-                    $filePath = $data['file'];
-
-                    Log::info("File uploaded to: " . $filePath);
-
                     try {
                         $data = UploadProcessLog::create([
-                            'name'      => "Request Upload",
-                            'file_name' => $filePath,
-                            'user_id'   => auth()->id(),
-                            'status'    => 1, // Processing
-                            'createdOn' => now(),
-                            'createdBy' => auth()->id(),
+                            'name'         => $data['name'],
+                            'file_name'    => $data['file_name'],
+                            'user_id'      => auth()->id(),
+                            'status'       => 0,
+                            'createdOn'    => now(),
+                            'process_type' => 1,
+                            'createdBy'    => auth()->id(),
                         ]);
 
                         Log::info("UploadProcessLog created with ID: " . $data->id);
@@ -140,12 +147,12 @@ class BulkRequest extends Page implements HasTable
     {
 
         if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
-            return UploadProcessLog::query()->where('process_type', 0);
+            return UploadProcessLog::query()->where('process_type', 1);
         }
 
         return UploadProcessLog::query()
             ->where('user_id', auth()->user()->id)
-            ->where('process_type', 0);
+            ->where('process_type', 1);
     }
 
 }
