@@ -58,7 +58,7 @@ class BulkRequest extends Page implements HasTable
                     }),
 
             ])
-            ->defaultSort('createdOn', 'desc')
+            ->defaultSort('id', 'desc')
             ->filters([
                 // optional filters
             ])
