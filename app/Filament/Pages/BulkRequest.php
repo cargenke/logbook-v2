@@ -15,6 +15,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use UnitEnum;
 
 class BulkRequest extends Page implements HasTable
@@ -64,6 +65,16 @@ class BulkRequest extends Page implements HasTable
             ])
             ->actions([
 
+                Action::make('download')
+                    ->label('Download')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(function ($record) {
+                        return Storage::disk('s3')->temporaryUrl(
+                            $record->file_name,
+                            now()->addMinutes(10)
+                        );
+                    })
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
@@ -88,14 +99,12 @@ class BulkRequest extends Page implements HasTable
                 ])
                 ->action(function (array $data) {
 
-                
-
                     $filePath = $data['file'];
 
                     Log::info("File uploaded to: " . $filePath);
 
                     try {
-                     $data = UploadProcessLog::create([
+                        $data = UploadProcessLog::create([
                             'name'      => "Request Upload",
                             'file_name' => $filePath,
                             'user_id'   => auth()->id(),
@@ -104,9 +113,8 @@ class BulkRequest extends Page implements HasTable
                             'createdBy' => auth()->id(),
                         ]);
 
+                        Log::info("UploadProcessLog created with ID: " . $data->id);
 
-                    Log::info("UploadProcessLog created with ID: " . $data->id);
-  
                         Notification::make()
                             ->title('Upload started successfully')
                             ->success()
