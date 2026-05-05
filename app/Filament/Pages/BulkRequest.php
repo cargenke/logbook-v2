@@ -89,13 +89,7 @@ class BulkRequest extends Page implements HasTable
                 ])
                 ->action(function (Action $action, array $data) {
 
-                    validator($data, [
-                        'file' => [
-                            'required',
-                            'file',
-                            'mimes:xls,xlsx',
-                        ],
-                    ])->validate();
+                
 
                     $filePath = $data['file'];
 
