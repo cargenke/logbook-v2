@@ -22,17 +22,17 @@ class DevCommand extends Command
     public function handle()
     {
 
-            $existinglb = LogbookProfile::withoutGlobalScopes()
-            ->whereNotNull('DocNum')
-            ->whereNull('status')
-            ->where('created_at', '>=', now()->subDays(100))
-            ->update([
-                'status' => 1
-            ]);
+        //     $existinglb = LogbookProfile::withoutGlobalScopes()
+        //     ->whereNotNull('DocNum')
+        //     ->whereNull('status')
+        //     ->where('created_at', '>=', now()->subDays(100))
+        //     ->update([
+        //         'status' => 1
+        //     ]);
 
-        dd($existinglb);
+        // dd($existinglb);
 
-        $chasis = 'MD625AF43T1B16149';
+        $chasis = ' MD625AF44L1AR6249';
         $chasisInfo = (new GetChasisInfoAction($chasis))->handle();
 
         dd($chasisInfo);

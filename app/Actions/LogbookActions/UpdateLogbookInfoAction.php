@@ -22,12 +22,12 @@ class UpdateLogbookInfoAction
         $logbook = $this->logbook;
 
 
-        $existinglb = LogbookProfile::where('chasisNumber', $logbook['DistNumber'])
-            ->whereNotNull('DocNum')
-            ->first();
+        $existinglb = LogbookProfile::where('chasisNumber', $logbook['DistNumber'])->first();
 
 
         if (!$existinglb) {
+
+            Log::info('DistNumber: ' . $logbook['DistNumber'] . ' - No existing logbook profile found. Creating new logbook and profile.');
 
             $lb = Logbook::updateOrCreate(
                 [
@@ -36,11 +36,12 @@ class UpdateLogbookInfoAction
                 [
                     // 'regNumber' => $logbook['NumberPlate'] ?? null,
                     'createdOn' => Carbon::now(),
+                    'status' => 1,
                     'pendingRequestsCreatedOn' => Carbon::now(),
                 ]
             );
 
-            LogbookProfile::updateOrCreate(
+            $logbookn = LogbookProfile::updateOrCreate(
                 [
                     'chasisNumber' => $logbook['DistNumber'],
                 ],
@@ -58,6 +59,7 @@ class UpdateLogbookInfoAction
                     'DocDate' => substr($logbook['DocDate'], 0, 16),
                     'NumAtCard' => $logbook['NumAtCard'],
                     'tel' => $logbook['PhoneNumber'],
+                    'status' => 1,
                     'createdOn' => Carbon::now(),
                 ]
             );
@@ -75,6 +77,17 @@ class UpdateLogbookInfoAction
             ]);
         }
 
+
+        if ($existinglb && $existinglb->status == null) {
+            Logbook::where('chasisNumber', $logbook['DistNumber'])
+                ->update([
+                    'status' => 1
+                ]);
+
+            LogbookProfile::where('chasisNumber', $logbook['DistNumber'])->update([
+                'status' => 1
+            ]);
+        }
 
         (new ProcessFailedAllocationsAction($logbook['DistNumber']))->handle();
 

@@ -3,6 +3,8 @@ namespace App\Filament\Pages;
 
 use App\Actions\LogbookActions\GetChasisInfoAction;
 use App\Actions\LogbookActions\UpdateLogbookInfoAction;
+use App\Enums\UploadProcessTypeEnum;
+use App\Exports\TemplateExports\LogbooksPendingRequestTemplateExport;
 use App\Models\UploadProcessLog;
 use App\Models\User;
 use BackedEnum;
@@ -18,19 +20,20 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use UnitEnum;
 
-class UpdateRequest extends Page implements HasTable
+class DirectTransfer extends Page implements HasTable
 {
 
     use InteractsWithTable;
-    protected string $view = 'filament.pages.update-request';
+    protected string $view = 'filament.pages.direct-transfer';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::Pencil;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowRight;
 
     protected static string|UnitEnum|null $navigationGroup = 'Logbook Management';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public function table(Table $table): Table
     {
@@ -78,6 +81,27 @@ class UpdateRequest extends Page implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+
+
+          Action::make('download')
+            ->label('Download Template')
+            ->icon('heroicon-o-arrow-down-tray')
+            ->tooltip('Download hatching summary')
+            ->action(function () {
+
+                return Excel::download(
+                    new LogbooksPendingRequestTemplateExport([[
+                        'chasis_number' => '',
+                        'reg_number' => '',
+                        'status' => '',
+                    ]]),
+                    'Direct Transfer Template.xlsx'
+                );
+
+            }),
+
+
+
             Action::make('Add New Request')
                 ->label('New Request')
                 ->icon('heroicon-o-arrow-up-tray')
@@ -123,9 +147,9 @@ class UpdateRequest extends Page implements HasTable
                             return;
                         }
 
-                        
+
                         Log::info("Logbook info retrieved: " . json_encode($logbookInfo));
-    
+
                         (new UpdateLogbookInfoAction($logbookInfo))->handle();
 
                         Notification::make()
@@ -138,8 +162,8 @@ class UpdateRequest extends Page implements HasTable
                             'status' => 1,
                         ]);
 
-                        
-                
+
+
                         Notification::make()
                             ->title('Upload started successfully')
                             ->success()
@@ -157,7 +181,7 @@ class UpdateRequest extends Page implements HasTable
                     }
 
                 })
-                ->modalHeading('Upload Bulk File')
+                ->modalHeading('Upload Direct Transfer File')
                 ->modalSubmitActionLabel('Add Request')
                 ->modalWidth('lg'),
         ];
@@ -167,12 +191,18 @@ class UpdateRequest extends Page implements HasTable
     {
 
         if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
-            return UploadProcessLog::query()->where('process_type', 10);
+            return UploadProcessLog::query()->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
         }
 
         return UploadProcessLog::query()
             ->where('user_id', auth()->user()->id)
-            ->where('process_type', 10);
+            ->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
+    }
+
+    
+       public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('SuperAdmin');
     }
 
 }

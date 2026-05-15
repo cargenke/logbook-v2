@@ -15,7 +15,6 @@ class EditLogbookRequest extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
         ];
     }
 }

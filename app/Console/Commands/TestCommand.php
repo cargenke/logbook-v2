@@ -19,6 +19,8 @@ class TestCommand extends Command
     {
     //    $user = Auth::loginUsingId(12);
 
+
+    
         $totalWithIssues = LogbookProfile::withoutGlobalScopes()->where('status', LogBookStatusEnum::WITH_ISSUES->value)
             ->doesntHave('request')
             ->update([
@@ -33,7 +35,7 @@ class TestCommand extends Command
             ]);
 
        
-        dd($totalWithIssues);
+    
 
   
     }
