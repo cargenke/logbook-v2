@@ -30,10 +30,11 @@ class DevCommand extends Command
 
 
 
-        Mail::to('kenneth.kibet@cargen.com')
+        Mail::to('caroline.akinyi@cargen.com')
+            ->cc(['kenneth.kibet@cargen.com','joyleen.lubanga@cargen.com','gideon.yegon@cargen.com'])
             ->send(new PendingAcceptanceNotificationMail(LogBookStatusEnum::PENDING_ACCEPTANCE));
 
-                    dd('Exported successfully');
+        dd('Exported successfully');
 
         $this->info('Daily Beyond Cap Report Notification Sent  . Date: ' . $date);
 
