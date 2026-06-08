@@ -2,8 +2,8 @@
 
 namespace App\Actions\LogbookActions;
 
+use App\Actions\LogbookActions\HelperActions\UpdateLogbookProfileStatusAction;
 use App\Actions\LogbookActions\ProcessFailedAllocationsAction;
-use App\Actions\LogbookActions\UpdateLogbookProfileStatusAction;
 use App\Models\Logbook;
 use App\Models\LogbookProfile;
 use Carbon\Carbon;
@@ -62,13 +62,7 @@ class UpdateLogbookInfoAction
                 ]
             );
         }
-
-
-
         (new UpdateLogbookProfileStatusAction($logbookProfile))->handle();
         (new ProcessFailedAllocationsAction($logbook['DistNumber']))->handle();
-
-
-
     }
 }

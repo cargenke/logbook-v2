@@ -29,7 +29,7 @@ class UpdateRequest extends Page implements HasTable
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Pencil;
 
- protected static string|UnitEnum|null $navigationGroup = 'Logbook Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Logbook Management';
 
     protected static ?int $navigationSort = 4;
 
@@ -174,6 +174,11 @@ class UpdateRequest extends Page implements HasTable
         return UploadProcessLog::query()
             ->where('user_id', auth()->user()->id)
             ->where('process_type', UploadProcessTypeEnum::UPDATE_REQUEST->value);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('SuperAdmin');
     }
 
 }

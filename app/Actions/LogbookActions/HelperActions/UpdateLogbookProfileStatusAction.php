@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\LogbookActions;
+namespace App\Actions\LogbookActions\HelperActions;
 
 use App\Enums\LogBookStatusEnum;
 use App\Models\LogbookProfile;
