@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\LogbookActions\GetChasisInfoAction;
 use App\Actions\LogbookActions\SyncChasisSalesDataAction;
 use App\Enums\LogBookStatusEnum;
 use App\Enums\UploadProcessTypeEnum;
@@ -10,6 +11,7 @@ use App\Models\UploadProcessLog;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 #[Signature('app:test')]
@@ -21,7 +23,13 @@ class TestCommand extends Command
      */
     public function handle()
     {
-    //    $user = Auth::loginUsingId(12);
+
+    $user = Auth::loginUsingId(12);
+       $chasis = ' MD625AE31T1AH6173';
+        $chasisInfo = (new GetChasisInfoAction($chasis))->handle();
+
+        dd($chasisInfo);
+
 
           $data=   (new SyncChasisSalesDataAction('20260605'))->handle();
     

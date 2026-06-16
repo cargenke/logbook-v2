@@ -12,6 +12,7 @@ use App\Models\UploadedDataLog;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -27,11 +28,19 @@ class DevCommand extends Command
     public function handle()
     {
 
+          $user = Auth::loginUsingId(1);
 
+    $logbookInformation = LogbookProfile::where('chasisNumber','MD625GF59F1A74778')->first();
+
+    dd($logbookInformation);
+
+
+
+        $date = now();
 
 
         Mail::to('caroline.akinyi@cargen.com')
-            ->cc(['kenneth.kibet@cargen.com','joyleen.lubanga@cargen.com','gideon.yegon@cargen.com'])
+            ->cc(['kenneth.kibet@cargen.com', 'joyleen.lubanga@cargen.com', 'gideon.yegon@cargen.com'])
             ->send(new PendingAcceptanceNotificationMail(LogBookStatusEnum::PENDING_ACCEPTANCE));
 
         dd('Exported successfully');
@@ -55,10 +64,7 @@ class DevCommand extends Command
 
         // dd($existinglb);
 
-        $chasis = ' MD625AF44L1AR6249';
-        $chasisInfo = (new GetChasisInfoAction($chasis))->handle();
 
-        dd($chasisInfo);
 
 
         $chasiss = UploadedDataLog::doesntHave("profile")
