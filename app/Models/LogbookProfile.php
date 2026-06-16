@@ -106,6 +106,8 @@ class LogbookProfile extends Model
         return $this->belongsTo(LogbookRequest::class, 'chasisNumber', 'chasisNumber');
     }
 
+    
+
     public function system_status(): BelongsTo
     {
         return $this->belongsTo(SystemStatus::class, 'status', 'ObjType');

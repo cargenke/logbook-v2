@@ -7,6 +7,7 @@ use App\Actions\LogbookActions\ProcessFailedAllocationsAction;
 use App\Enums\LogBookStatusEnum;
 use App\Exports\PendingAcceptanceNotificationExport;
 use App\Mail\PendingAcceptanceNotificationMail;
+use App\Models\Logbook;
 use App\Models\LogbookProfile;
 use App\Models\UploadedDataLog;
 use Illuminate\Console\Attributes\Description;
@@ -28,11 +29,25 @@ class DevCommand extends Command
     public function handle()
     {
 
-          $user = Auth::loginUsingId(1);
 
-    $logbookInformation = LogbookProfile::where('chasisNumber','MD625GF59F1A74778')->first();
 
-    dd($logbookInformation);
+
+
+
+
+        $user = Auth::loginUsingId(1);
+
+        // $logbookInformation = LogbookProfile::where('status',1)->count();
+        $logbookInformation = Logbook::whereIn('id', function ($query) {
+            $query->select('logbook_id')
+                ->from('logbook_profiles')
+                ->where('status', 1);
+        })
+            ->whereNull('status')
+            ->update([
+                'status' => 1
+            ]);
+        dd($logbookInformation);
 
 
 
