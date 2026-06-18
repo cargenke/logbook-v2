@@ -45,6 +45,7 @@ class SystemLog extends Page implements HasTable
                 TextColumn::make('status')
                     ->label('Status'),
                 TextColumn::make('remarks')
+                    ->searchable()
                     ->label('Remarks'),
 
 
