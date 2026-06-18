@@ -72,7 +72,7 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
 
         foreach ($data[0] as $index => $row) {
 
-            $chasisNumber = $row['frame_no'] ?? null;
+            $chasisNumber = $row['chasis_number'] ?? null;
 
             try {
                 $logbook = LogbookProfile::withoutGlobalScopes()->where('chasisNumber', $chasisNumber)->first();
