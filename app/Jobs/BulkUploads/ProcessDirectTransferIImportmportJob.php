@@ -6,7 +6,6 @@ use App\Imports\BulkTaskImports;
 use App\Models\LogbookProfile;
 use App\Models\UploadedDataLog;
 use App\Models\UploadProcessLog;
-use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -15,6 +14,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProcessDirectTransferIImportmportJob implements ShouldQueue
@@ -45,7 +45,10 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
     public function handle()
     {
         $uploadProcessLog = $this->uploadProcessLog;
-     
+
+        if (! Storage::disk('s3')->exists($uploadProcessLog->file_name)) {
+            dd($uploadProcessLog);
+        }
 
         try {
 
@@ -57,15 +60,13 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
 
         } catch (Exception $e) {
 
-        
-
             UploadProcessLog::where('file_name', $this->filePath)
                 ->update([
                     'status' => 0,
                 ]);
             Log::error('Error importing file: ' . $e);
 
-           return;
+            return;
             // throw $e;
         }
 
@@ -102,7 +103,7 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
 
                 $logbook->update([
                     'groupCode' => 'direct_transfer',
-                    'status' => LogBookStatusEnum::DIRECT_REGISTRATION->value
+                    'status'    => LogBookStatusEnum::DIRECT_REGISTRATION->value,
                 ]);
 
             } catch (\Throwable $th) {
@@ -122,7 +123,7 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
         }
 
         $this->uploadProcessLog->update([
-            'status' => 0
+            'status' => 0,
         ]);
 
     }
