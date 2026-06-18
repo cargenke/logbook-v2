@@ -121,5 +121,9 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
 
         }
 
+        $this->uploadProcessLog->update([
+            'status' => 0
+        ]);
+
     }
 }
