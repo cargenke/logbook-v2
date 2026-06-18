@@ -127,7 +127,7 @@ class PendingAcceptance extends Page implements HasTable
 
                     try {
                         $data = UploadProcessLog::create([
-                            'name' => "Request Upload",
+                            'name' => "Pending Acceptance",
                             'file_name' => $filePath,
                             'user_id' => auth()->id(),
                             'status' => 1, // Processing

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\LogbookRequest;
@@ -14,18 +13,15 @@ class LogbookProfile extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $table = 'logbook_profiles';
-
+    protected $table   = 'logbook_profiles';
 
     protected static function booted()
     {
         static::addGlobalScope('excludeCashCustomer', function (Builder $builder) {
 
-
-            if (!auth()->user()?->hasAnyRole(['Financier'])) {
+            if (! auth()->user()?->hasAnyRole(['Financier'])) {
                 return;
             }
-
 
             $excludedCardCodes = [
                 'C-SIA-C00015',
@@ -55,36 +51,43 @@ class LogbookProfile extends Model
                 'C-TRD-C00015',
                 'C-KUB-C00015',
 
-                
-
                 'C-TRD-S000298',
                 'C-DIST-B00012',
-                'C-DIST-A00007'
+                'C-DIST-A00007',
             ];
 
             $builder->whereNotIn('CardCode', $excludedCardCodes);
         });
 
+        static::addGlobalScope('directTransferShouldBeVisibleOnlyToSuperAdmin', function ($builder) {
+            if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
+                return;
+            }
+            //$builder->whereNotIn('groupCode', ['direct_transfer']);
+
+            $builder->where(function ($q) {
+                $q->whereNull('groupCode')
+                    ->orWhereNotIn('groupCode', ['direct_transfer']);
+            });
+
+        });
         static::addGlobalScope('cleanChasis', function ($builder) {
             $builder->where('chasisNumber', 'not like', '%.%');
         });
 
         static::addGlobalScope('onlyStatus', function ($builder) {
-            $builder->whereIn('status', [1, 2, 3, 4, 5, 6]);
+            $builder->whereIn('status', [1, 2, 3, 4, 5, 6,7]);
         });
 
         static::addGlobalScope('onlyChasisLinkedToPin', function ($builder) {
 
-
-            if (!auth()->user()?->hasAnyRole(['Dealer', 'Customer'])) {
+            if (! auth()->user()?->hasAnyRole(['Dealer', 'Customer'])) {
                 return;
             }
 
             $builder->where('PinNo', auth()->user()?->pin_no);
         });
     }
-
-
 
     public function logbookLocation(): BelongsTo
     {
@@ -105,8 +108,6 @@ class LogbookProfile extends Model
     {
         return $this->belongsTo(LogbookRequest::class, 'chasisNumber', 'chasisNumber');
     }
-
-    
 
     public function system_status(): BelongsTo
     {

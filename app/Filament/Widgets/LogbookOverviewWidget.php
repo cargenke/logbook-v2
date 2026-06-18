@@ -29,6 +29,11 @@ class LogbookOverviewWidget extends StatsOverviewWidget
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->description('With Issues')
                 ->color(LogBookStatusEnum::WITH_ISSUES->color()),
+
+              Stat::make('Direct Trasfer', number_format(LogbookProfile::where('status', LogBookStatusEnum::DIRECT_REGISTRATION->value)->count()))
+                ->descriptionIcon('heroicon-m-arrow-right')
+                ->description('Direct Trasfer')
+                ->color(LogBookStatusEnum::DIRECT_REGISTRATION->color()),
         ];
     }
 }
