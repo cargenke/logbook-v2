@@ -151,19 +151,7 @@ class DirectTransfer extends Page implements HasTable
                         ]);
 
 
-                        $logbookInfo = (new GetChasisInfoAction($record['name']))->handle();
-
-                        if (!$logbookInfo) {
-                            Notification::make()
-                                ->title('No logbook information found for the provided chassis number')
-                                ->danger()
-                                ->send();
-                            return;
-                        }
-
-                        Log::info("Logbook info retrieved: " . json_encode($logbookInfo));
-
-                        (new UpdateLogbookInfoAction($logbookInfo))->handle();
+                    
 
                         Notification::make()
                             ->title('Upload started successfully')
@@ -171,15 +159,12 @@ class DirectTransfer extends Page implements HasTable
                             ->send();
 
 
-                        $record->update([
-                            'status' => 1,
-                        ]);
+                        // $record->update([
+                        //     'status' => 1,
+                        // ]);
 
 
-                        Notification::make()
-                            ->title('Upload started successfully')
-                            ->success()
-                            ->send();
+
 
                     } catch (\Throwable $th) {
 
