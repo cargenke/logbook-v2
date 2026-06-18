@@ -25,7 +25,7 @@ class TestCommand extends Command
     public function handle()
     {
 
-    $uploadProcessLog = UploadProcessLog::findOrFail(1524);
+    $uploadProcessLog = UploadProcessLog::findOrFail(1529);
 
     (new ProcessDirectTransferIImportmportJob($uploadProcessLog))->handle();
 
