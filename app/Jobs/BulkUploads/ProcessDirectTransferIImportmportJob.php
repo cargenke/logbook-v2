@@ -45,11 +45,7 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
     public function handle()
     {
         $uploadProcessLog = $this->uploadProcessLog;
-        $import           = new BulkTaskImports();
-
-        $user = User::where('id', $this->user_id)->first();
-
-        
+     
 
         try {
 
@@ -61,11 +57,15 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
 
         } catch (Exception $e) {
 
+        
+
             UploadProcessLog::where('file_name', $this->filePath)
                 ->update([
                     'status' => 0,
                 ]);
-            Log::error('Error importing file: ' . $e->getMessage());
+            Log::error('Error importing file: ' . $e);
+
+           return;
             // throw $e;
         }
 
