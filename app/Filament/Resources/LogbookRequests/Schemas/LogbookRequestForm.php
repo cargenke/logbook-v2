@@ -5,6 +5,7 @@ namespace App\Filament\Resources\LogbookRequests\Schemas;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -68,7 +69,11 @@ class LogbookRequestForm
                                     ->readOnly(!$canEdit)
                                     ->label('PIN Number 3'),
 
-                            ])->columns(3),
+                                Toggle::make('is_instant_transfer')
+                                    ->readOnly(!$canEdit)
+                                    ->label('Is Instant Transfer'),
+
+                            ])->columns(4),
 
                     ]),
 
