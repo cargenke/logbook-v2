@@ -16,6 +16,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\HtmlString;
 use UnitEnum;
 
 class UpdateRequest extends Page implements HasTable
@@ -46,9 +47,10 @@ class UpdateRequest extends Page implements HasTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->tooltip(fn($record) => "
-        Remarks: {$record->remarks}
-    ")
+                    ->tooltip(fn($record) => new HtmlString("
+        <strong>Remarks:</strong><br>
+        " . ($record->remarks ?: 'No remarks available')
+                    ))
                     ->icon(fn(string $state): string => match ($state) {
                         '2' => 'heroicon-m-x-mark',
                         '1' => 'heroicon-m-x-mark',
