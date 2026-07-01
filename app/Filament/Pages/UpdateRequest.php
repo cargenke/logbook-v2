@@ -55,11 +55,12 @@ class UpdateRequest extends Page implements HasTable
                         '0' => 'heroicon-m-check',
                     })
                     ->formatStateUsing(fn(string $state): mixed => match ($state) {
+                        '2' => 'Failed',
                         '1' => 'Processing',
                         '0' => 'Processed',
                     })
                     ->color(fn(string $state): string => match ($state) {
-                        '2' => 'Failed',
+                        '2' => 'danger',
                         '1' => 'primary',
                         '0' => 'success',
                     }),
