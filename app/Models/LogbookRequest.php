@@ -25,6 +25,10 @@ class LogbookRequest extends Model
         return $this->belongsTo(User::class, 'createdBy', 'id');
     }
 
+     public function assignto(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assign_to', 'id');
+    }
 
     public function logbook_issues(): BelongsTo
     {

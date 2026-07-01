@@ -2,8 +2,12 @@
 
 namespace App\Filament\Resources\LogbookProfiles\Pages;
 
+use App\Enums\LogBookStatusEnum;
 use App\Filament\Resources\LogbookProfiles\LogbookProfileResource;
+use App\Models\Logbook;
+use App\Models\LogbookProfile;
 use App\Models\LogbookRequest;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -12,11 +16,15 @@ use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Log;
 
 class LogbookInfo extends Page
 {
-    use InteractsWithRecord, InteractsWithForms;
+    use InteractsWithRecord;
+    use InteractsWithForms;
 
     protected static string $resource = LogbookProfileResource::class;
 
@@ -31,12 +39,13 @@ class LogbookInfo extends Page
         $this->record = $this->resolveRecord($record);
 
         $this->form->fill([
-            'ChasisNumber'  => $this->record->chasisNumber,
-            'RegNumber'     => $this->record->regNumber,
-            'LogBookFee'    => $this->record->LogBookFee,
-            'name1' => $this->record->CustomerName,
-            'PinNo1' => $this->record->PinNo,
-            'tel1' => $this->record->tel,
+            'ChasisNumber' => $this->record->chasisNumber,
+            'RegNumber'    => $this->record->regNumber,
+            'LogBookFee'   => $this->record->LogBookFee,
+            'name1'        => $this->record->CustomerName,
+            'PinNo1'       => $this->record->PinNo,
+            'modeofpayment' => "POI",
+            'tel1'         => $this->record->tel,
         ]);
         $logBookRequest = LogbookRequest::where('chasisNumber', $this->record->chasisNumber)
             ->first();
@@ -64,7 +73,6 @@ class LogbookInfo extends Page
     public function form(Schema $schema): Schema
     {
 
-
         return $schema
             ->statePath('data')
             ->schema([
@@ -72,20 +80,19 @@ class LogbookInfo extends Page
                 Section::make('Logbook Profile')
                     ->schema([
                         TextInput::make('ChasisNumber')
-                            ->readOnly(!$this->canEdit)
+                            ->readOnly(! $this->canEdit)
                             ->label('Chasis Number')
                             ->required(),
 
                         TextInput::make('RegNumber')
-                            ->readOnly(!$this->canEdit)
+                            ->readOnly(! $this->canEdit)
                             ->label('Reg Number')
                             ->required(),
 
                         TextInput::make('LogBookFee')
-                            ->readOnly(!$this->canEdit)
+                            ->readOnly(! $this->canEdit)
                             ->label('Logbook Fee')
                             ->required(),
-
                     ])->columns(3),
 
                 Section::make('Logbook Request Details')
@@ -95,30 +102,40 @@ class LogbookInfo extends Page
                             ->schema([
                                 TextInput::make('name1')
                                     ->label('Name')
-                                    ->readOnly(!$this->canEdit)
+                                    ->readOnly(! $this->canEdit)
                                     ->required(),
 
                                 TextInput::make('tel1')
                                     ->label('Phone Number 1')
-                                    ->readOnly(!$this->canEdit)
+                                    ->readOnly(! $this->canEdit)
                                     ->required(),
 
                                 TextInput::make('tel2')
                                     ->label('Phone Number 2')
-                                    ->readOnly(!$this->canEdit)
+                                    ->readOnly(! $this->canEdit)
+                                    ->rules([
+                                        'regex:/^\+\d{12}$/',
+                                        'different:tel1',
+                                    ])
                                     ->required(),
 
                                 TextInput::make('PinNo1')
                                     ->label('KRA Pin No 1')
-                                    ->readOnly(!$this->canEdit)
+                                    ->readOnly(! $this->canEdit)
+                                    ->rules([
+                                        'string',
+                                        'regex:/^[A-Za-z]\d{9}[A-Za-z]$/',
+                                    ])
                                     ->required(),
-
 
                                 TextInput::make('email')
                                     ->label('Email')
-                                    ->readOnly(!$this->canEdit)
+                                    ->readOnly(! $this->canEdit)
+                                    ->rules([
+                                        'string',
+                                        'regex:/^[A-Za-z]\d{9}[A-Za-z]$/',
+                                    ])
                                     ->required(),
-
 
                                 TextInput::make('modeofpayment')
                                     ->label('Mode of Payment'),
@@ -127,15 +144,15 @@ class LogbookInfo extends Page
                         Section::make('Other Owners Details')
                             ->schema([
                                 TextInput::make('name2')
-                                    ->readOnly(!$this->canEdit)
+                                    ->readOnly(! $this->canEdit)
                                     ->label('Name'),
 
                                 TextInput::make('PinNo2')
-                                    ->readOnly(!$this->canEdit)
+                                    ->readOnly(! $this->canEdit)
                                     ->label('KRA Pin No 2'),
 
                                 TextInput::make('PinNo3')
-                                    ->readOnly(!$this->canEdit)
+                                    ->readOnly(! $this->canEdit)
                                     ->label('PIN Number 3'),
 
                             ])->columns(3),
@@ -162,14 +179,52 @@ class LogbookInfo extends Page
         DB::beginTransaction();
         try {
 
+            $data = $this->data;
+
+
+            $logBookInfo = Logbook::where('id', $this->record->logbook_id)->first();
+            $logBookInfo->update([
+                'status' => LogBookStatusEnum::PROCESSING,
+            ]);
+
+
+            $request = LogbookRequest::firstOrCreate(
+                [
+                    'chasisNumber' => $data['ChasisNumber'],
+                ],
+                [
+                    'logbook_id' => $this->record->logbook_id,
+                    'regNumber' => $data['RegNumber'],
+                    'name1' => $data['name1'],
+                    'name2' => $data['name2'],
+                    'email' => $data['email'],
+                    'ntsaApplicationNumber' => Str::upper(Str::random(8)),
+                    'tel1' => $data['tel1'],
+                    'tel2' => $data['tel2'],
+                    'PinNo1' => $data['PinNo1'],
+                    'PinNo2' => $data['PinNo2'],
+                    'PinNo3' => $data['PinNo3'],
+                    'createdOn' => Carbon::now(),
+                    'status' => 1,
+                    'createdBy' => Auth::user()->id,
+                    'is_instant_transfer' => true,
+                ]
+            );
+
+            LogbookProfile::where('chasisNumber', $this->record->chasisNumber)
+               ->update([
+                   'status' => LogBookStatusEnum::PROCESSING,
+                   'applicationNumber' => $request->ntsaApplicationNumber
+               ]);
+
+
             Notification::make()
                 ->success()
-                ->title('Updated Successfully')
+                ->title('Created Successfully')
                 ->send();
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            // throw $th;
 
             Notification::make()
                 ->warning()

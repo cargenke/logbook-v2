@@ -23,14 +23,14 @@ class LogbookRequestsTable
 
                 TextColumn::make('profile.DocDate')
                     ->date('Y-m-d')
-                    ->visible(fn() => $isAdmin)
+                    ->visible(fn () => $isAdmin)
                     ->label('Doc Date'),
 
 
                 TextColumn::make('owner_display')
                     ->label('Customer Name')
                     ->getStateUsing(
-                        fn($record) =>
+                        fn ($record) =>
                         $record->profile->CustomerName ?? $record->profile->NumAtCard
                     ),
 
@@ -39,17 +39,10 @@ class LogbookRequestsTable
                 TextColumn::make('owner_display')
                     ->label('Customer Name')
                     ->getStateUsing(
-                        fn($record) =>
+                        fn ($record) =>
                         $record->profile->CustomerName ?? $record->profile?->NumAtCard ?? 'N/A'
                     ),
 
-
-                TextColumn::make('branch_dealer')
-                    ->label('Branch/Dealer')
-                    ->getStateUsing(
-                        fn($record) =>
-                        $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
-                    ),
 
                 TextColumn::make('chasisNumber')
                     ->copyable()
@@ -63,30 +56,32 @@ class LogbookRequestsTable
 
                 TextColumn::make('profile.isAvailable')
                     ->label('LB Status')
-                    ->tooltip(fn($state) => $state ? 'Logbook is available' : 'Logbook is not available')
+                    ->tooltip(fn ($state) => $state ? 'Logbook is available' : 'Logbook is not available')
                     ->badge()
-                    ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                    ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->color(fn($state) => $state ? 'success' : 'warning'),
+                    ->color(fn ($state) => $state ? 'success' : 'warning'),
 
                 TextColumn::make('branch_display')
                     ->label('Branch/Dealer')
                     ->getStateUsing(
-                        fn($record) =>
+                        fn ($record) =>
                         $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
                     )
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->visible(fn() => $isAdmin),
+                    ->visible(fn () => $isAdmin),
 
                 TextColumn::make('sap_location')
                     ->label('SAP Location')
                     ->getStateUsing(
-                        fn($record) => $record->profile?->Location ?? 'N/A'
+                        fn ($record) => $record->profile?->Location ?? 'N/A'
                     )
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->visible(fn() => $isAdmin),
+                    ->visible(fn () => $isAdmin),
+
+                   TextColumn::make('user.name')
+                    ->label('Requested By'),
                 TextColumn::make('createdOn')
-                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -108,7 +103,7 @@ class LogbookRequestsTable
                     ->options(
                         collect(LogBookStatusEnum::cases())
                             // ->whereIn('value', [LogBookStatusEnum::PROCESSING,  LogBookStatusEnum::PENDING_ACCEPTANCE, LogBookStatusEnum::WITH_ISSUES])
-                            ->mapWithKeys(fn($case) => [
+                            ->mapWithKeys(fn ($case) => [
                                 $case->value => $case->label()
                             ])
                             ->toArray()

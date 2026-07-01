@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Enums;
 
 enum LogBookStatusEnum: string
 {
+
     case PENDING = '1';
     case PROCESSING = '2';
     case PENDING_ACCEPTANCE = '3';
@@ -17,7 +17,7 @@ enum LogBookStatusEnum: string
     {
         return match ($this) {
             self::PENDING => 'Pending',
-            self::PROCESSING => 'Requested',
+            self::PROCESSING => 'WIP',
             self::PENDING_ACCEPTANCE => 'P.Acceptance',
             self::WITH_ISSUES => 'With Issues',
             self::ACCEPTED => 'Accepted',

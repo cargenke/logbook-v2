@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\LogbookProfiles\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -31,6 +29,7 @@ class LogbookProfileForm
                         TextInput::make('Location')->label('Location'),
                         TextInput::make('PinNo')->label('PIN Number'),
                         TextInput::make('IDNo')->label('ID Number'),
+                        
                     ])
                     ->columnSpan('full')
                     ->columns(4),
@@ -71,7 +70,7 @@ class LogbookProfileForm
                                     ->label('Mode of Payment'),
                             ])->columns(3),
 
-                        Section::make('Other Owners Details')
+                        Section::make('Other Owners Details 2')
                             ->schema([
                                 TextInput::make('name2')
                                     ->readOnly(!$canEdit)
@@ -85,9 +84,6 @@ class LogbookProfileForm
                                     ->readOnly(!$canEdit)
                                     ->label('PIN Number 3'),
 
-                                                        Toggle::make('is_instant_transfer')
-                      
-                                    ->label('Is Instant Transfer'),
 
                             ])->columns(4),
 
