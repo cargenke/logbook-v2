@@ -43,8 +43,8 @@ class ProcessFailedAllocationsAction
 
         $LogbookProfileWithNull = LogbookProfile::withoutGlobalScopes()
         ->where('chasisNumber', $chasisNumber)
-            ->whereNull('regNumber')
-            ->first();
+        ->whereNull('regNumber')
+    ->first();
 
         if ($LogbookProfileWithNull) {
             $updateValues = true;

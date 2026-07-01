@@ -25,7 +25,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
@@ -39,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
     
             ->navigationGroups([
                 'Logbook Management',
+                'Tickets Management',
                 'Bulk Operations'
             ])
             ->middleware([

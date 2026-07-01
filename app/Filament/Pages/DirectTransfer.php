@@ -159,12 +159,6 @@ class DirectTransfer extends Page implements HasTable
                             ->send();
 
 
-                        // $record->update([
-                        //     'status' => 1,
-                        // ]);
-
-
-
                     } catch (\Throwable $th) {
 
                         Log::info("Error uploading file: " . $th);

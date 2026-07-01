@@ -31,7 +31,7 @@ class TestCommand extends Command
     // dd("Done");
 
     $user = Auth::loginUsingId(12);
-       $chasis = ' MD625AE37S1N00570';
+       $chasis = ' MD625NF57M1C03005';
         $chasisInfo = (new GetChasisInfoAction($chasis))->handle();
 
         dd($chasisInfo);
