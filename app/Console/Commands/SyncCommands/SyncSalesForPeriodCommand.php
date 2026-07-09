@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Console\Commands\SyncCommands;
 
 use App\Actions\LogbookActions\SyncChasisSalesDataAction;
@@ -24,24 +25,24 @@ class SyncSalesForPeriodCommand extends Command
         $user = Auth::loginUsingId(1);
 
         $startDate = $this->argument('start_date');
-        $endDate   = $this->argument('end_date');
+        $endDate = $this->argument('end_date');
 
         $period = CarbonPeriod::create($startDate, $endDate);
 
         foreach ($period as $date) {
 
-            $this->info("Syncing Sales For: " . $date);
+            $this->info('Syncing Sales For: '.$date);
 
             $dateFormatted = $date->format('Ymd');
 
             $record = UploadProcessLog::create([
-                'name'         => 'Sync Sales Data For: ' . $dateFormatted,
-                'file_name'    => $dateFormatted,
-                'user_id'      => auth()->id(),
-                'status'       => -1,
-                'createdOn'    => now(),
+                'name' => 'Sync Sales Data For: '.$dateFormatted,
+                'file_name' => $dateFormatted,
+                'user_id' => auth()->id(),
+                'status' => -1,
+                'createdOn' => now(),
                 'process_type' => UploadProcessTypeEnum::SYNC_SALES->value,
-                'createdBy'    => auth()->id(),
+                'createdBy' => auth()->id(),
             ]);
 
             try {
@@ -53,23 +54,24 @@ class SyncSalesForPeriodCommand extends Command
 
                 $record->update([
                     'status' => 1,
-                    'name'   => 'Sync Sales Data For: ' . $dateFormatted . " Total Sync: " . count($logbooks),
+                    'name' => 'Sync Sales Data For: '.$dateFormatted.' Total Sync: '.count($logbooks),
                 ]);
 
             } catch (\Throwable $th) {
 
-                Log::info("Failed  " . $th);
+                Log::info('Failed  '.$th);
 
                 $this->info($th->getMessage());
 
                 $record->update([
                     'status' => 0,
-                    'name'   => "Failed Syncing for: " . $dateFormatted . ", Total Pulled Sync: " . count($logbooks),
+                    'name' => 'Failed Syncing for: '.$dateFormatted.', Total Pulled Sync: '.count($logbooks),
                 ]);
+
                 continue;
             }
 
-            $this->comment("Finished Syncing Sales For: " . $date);
+            $this->comment('Finished Syncing Sales For: '.$date);
         }
 
     }

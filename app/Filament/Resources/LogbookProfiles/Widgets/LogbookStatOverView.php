@@ -8,11 +8,9 @@ use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-
 class LogbookStatOverView extends StatsOverviewWidget
 {
     use InteractsWithPageTable;
-
 
     protected function getTablePage(): string
     {
@@ -23,6 +21,7 @@ class LogbookStatOverView extends StatsOverviewWidget
     {
         return 4;
     }
+
     protected function getStats(): array
     {
         return [

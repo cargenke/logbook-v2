@@ -11,6 +11,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListLogbookRequests extends ListRecords
 {
     use ExposesTableToWidgets;
+
     protected static string $resource = LogbookRequestResource::class;
 
     protected function getHeaderActions(): array
@@ -23,7 +24,7 @@ class ListLogbookRequests extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            LogbookRequestStatOverView::class
+            LogbookRequestStatOverView::class,
         ];
     }
 }

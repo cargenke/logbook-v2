@@ -33,9 +33,9 @@ return new class extends Migration
             $table->dateTime('updatedOn')->nullable();
             $table->string('updatedBy')->nullable();
             $table->string('ntsaApplicationNumber')->nullable();
-            $table->integer('isClosed')->default(1)->comment("0=>No,1=>Yes, For Editing");
-            $table->integer('isActive')->default(1)->comment("0=>No,1=>Yes");
-            $table->string('status')->nullable()->comment("0=>No,1=>Yes");
+            $table->integer('isClosed')->default(1)->comment('0=>No,1=>Yes, For Editing');
+            $table->integer('isActive')->default(1)->comment('0=>No,1=>Yes');
+            $table->string('status')->nullable()->comment('0=>No,1=>Yes');
             $table->timestamps();
         });
     }

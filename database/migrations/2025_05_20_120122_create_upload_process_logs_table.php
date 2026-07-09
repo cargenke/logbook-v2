@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('upload_process_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('name')->nullable()->comment("Process Name");
+            $table->string('name')->nullable()->comment('Process Name');
             $table->string('file_name')->nullable();
-            $table->string('status')->nullable()->comment("0 => No Process Running, 1 => Process Running");
+            $table->string('status')->nullable()->comment('0 => No Process Running, 1 => Process Running');
             $table->timestamp('createdOn')->nullable()->comment();
             $table->integer('createdBy')->nullable()->comment();
             $table->timestamp('editedOn')->nullable()->comment();

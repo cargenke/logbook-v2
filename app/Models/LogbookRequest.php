@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LogbookRequest extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $table = 'logbook_requests';
 
+    protected $table = 'logbook_requests';
 
     public function profile(): BelongsTo
     {
@@ -25,7 +24,7 @@ class LogbookRequest extends Model
         return $this->belongsTo(User::class, 'createdBy', 'id');
     }
 
-     public function assignto(): BelongsTo
+    public function assignto(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assign_to', 'id');
     }

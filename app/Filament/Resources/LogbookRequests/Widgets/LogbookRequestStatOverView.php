@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\LogbookRequests\Widgets;
 
 use App\Enums\LogBookStatusEnum;
@@ -16,10 +17,11 @@ class LogbookRequestStatOverView extends StatsOverviewWidget
         return ListLogbookRequests::class;
     }
 
-    public function getHeaderWidgetsColumns(): int | array
+    public function getHeaderWidgetsColumns(): int|array
     {
         return 4;
     }
+
     protected function getStats(): array
     {
         return [

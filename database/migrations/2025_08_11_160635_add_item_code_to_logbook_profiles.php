@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('logbook_profiles', function (Blueprint $table) {
-            $table->string('ItemCode',50)->after('data_source')->nullable();
+            $table->string('ItemCode', 50)->after('data_source')->nullable();
         });
     }
 

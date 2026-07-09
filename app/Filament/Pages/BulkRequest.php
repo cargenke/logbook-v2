@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Filament\Pages;
 
 use App\Enums\UploadProcessTypeEnum;
 use App\Models\UploadProcessLog;
-use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
@@ -21,8 +21,8 @@ use UnitEnum;
 
 class BulkRequest extends Page implements HasTable
 {
-
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.bulk-request';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowUpTray;
@@ -45,16 +45,16 @@ class BulkRequest extends Page implements HasTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-m-check',
                         '1' => 'heroicon-m-x-mark',
 
                     })
-                    ->formatStateUsing(fn(string $state): mixed => match ($state) {
+                    ->formatStateUsing(fn (string $state): mixed => match ($state) {
                         '0' => 'Processed',
                         '1' => 'Processing ',
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         '0' => 'success',
                         '1' => 'primary',
                     }),
@@ -69,7 +69,7 @@ class BulkRequest extends Page implements HasTable
                 Action::make('download')
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->visible(fn($record) => $record->file_name !== null)
+                    ->visible(fn ($record) => $record->file_name !== null)
                     ->url(function ($record) {
                         return Storage::disk('s3')->temporaryUrl(
                             $record->file_name,
@@ -103,11 +103,9 @@ class BulkRequest extends Page implements HasTable
 
                     $filePath = $data['file'];
 
-              
-
                     try {
                         $data = UploadProcessLog::create([
-                            'name' => "Request Upload",
+                            'name' => 'Request Upload',
                             'file_name' => $filePath,
                             'user_id' => auth()->id(),
                             'status' => 1, // Processing
@@ -116,7 +114,7 @@ class BulkRequest extends Page implements HasTable
                             'createdBy' => auth()->id(),
                         ]);
 
-                        Log::info("UploadProcessLog created with ID: " . $data->id);
+                        Log::info('UploadProcessLog created with ID: '.$data->id);
 
                         Notification::make()
                             ->title('Upload started successfully')
@@ -124,7 +122,7 @@ class BulkRequest extends Page implements HasTable
                             ->send();
 
                     } catch (\Throwable $th) {
-                        Log::info("Error uploading file: " . $th->getMessage());
+                        Log::info('Error uploading file: '.$th->getMessage());
                         Notification::make()
                             ->title('Failed to start upload process')
                             ->danger()
@@ -149,5 +147,4 @@ class BulkRequest extends Page implements HasTable
             ->where('user_id', auth()->user()->id)
             ->where('process_type', UploadProcessTypeEnum::BULK_UPLOAD_REQUEST->value);
     }
-
 }

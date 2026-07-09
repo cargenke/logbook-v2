@@ -2,10 +2,7 @@
 
 namespace App\Filament\Resources\LogbookRequests\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -15,6 +12,7 @@ class LogbookRequestForm
     {
 
         $canEdit = false;
+
         return $schema
             ->components([
 
@@ -22,48 +20,46 @@ class LogbookRequestForm
                     ->columnSpan('full')
                     ->schema([
 
-                       Section::make('Logbook Profile')
-                    ->schema([
-                        TextInput::make('chasisNumber')
-                            ->readOnly(!$canEdit)
-                            ->label('Chasis Number')
-                            ->required(),
+                        Section::make('Logbook Profile')
+                            ->schema([
+                                TextInput::make('chasisNumber')
+                                    ->readOnly(! $canEdit)
+                                    ->label('Chasis Number')
+                                    ->required(),
 
-                        TextInput::make('regNumber')
-                            ->readOnly(!$canEdit)
-                            ->label('Reg Number')
-                            ->required(),
+                                TextInput::make('regNumber')
+                                    ->readOnly(! $canEdit)
+                                    ->label('Reg Number')
+                                    ->required(),
 
-                    ])->columns(2),
+                            ])->columns(2),
 
                         Section::make('First Owner Details')
                             ->schema([
                                 TextInput::make('name1')
                                     ->label('Name')
-                                    ->readOnly(!$canEdit)
+                                    ->readOnly(! $canEdit)
                                     ->required(),
 
                                 TextInput::make('tel1')
                                     ->label('Phone Number 1')
-                                    ->readOnly(!$canEdit)
+                                    ->readOnly(! $canEdit)
                                     ->required(),
 
                                 TextInput::make('tel2')
                                     ->label('Phone Number 2')
-                                    ->readOnly(!$canEdit)
+                                    ->readOnly(! $canEdit)
                                     ->required(),
 
                                 TextInput::make('PinNo1')
                                     ->label('KRA Pin No 1')
-                                    ->readOnly(!$canEdit)
+                                    ->readOnly(! $canEdit)
                                     ->required(),
-
 
                                 TextInput::make('email')
                                     ->label('Email')
-                                    ->readOnly(!$canEdit)
+                                    ->readOnly(! $canEdit)
                                     ->required(),
-
 
                                 TextInput::make('modeofpayment')
                                     ->label('Mode of Payment'),
@@ -72,19 +68,17 @@ class LogbookRequestForm
                         Section::make('Other Owners Details')
                             ->schema([
                                 TextInput::make('name2')
-                                    ->readOnly(!$canEdit)
+                                    ->readOnly(! $canEdit)
                                     ->label('Name'),
 
                                 TextInput::make('PinNo2')
-                                    ->readOnly(!$canEdit)
+                                    ->readOnly(! $canEdit)
                                     ->label('KRA Pin No 2'),
 
                                 TextInput::make('PinNo3')
-                                    ->readOnly(!$canEdit)
+                                    ->readOnly(! $canEdit)
                                     ->label('PIN Number 3'),
 
-
-        
                             ])->columns(3),
 
                     ]),

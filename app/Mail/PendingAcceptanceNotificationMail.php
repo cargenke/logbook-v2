@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Enums\LogBookStatusEnum;
-use App\Exports\DailyBeyondCapReportExport;
 use App\Exports\PendingAcceptanceNotificationExport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -28,15 +27,13 @@ class PendingAcceptanceNotificationMail extends Mailable
         $this->status = $status;
     }
 
-
-
     /**
      * Get the message envelope.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'All Logbooks With Status - ' . $this->status->label(),
+            subject: 'All Logbooks With Status - '.$this->status->label(),
         );
     }
 
@@ -61,7 +58,7 @@ class PendingAcceptanceNotificationMail extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromData(fn() => ExcelExport::raw(new PendingAcceptanceNotificationExport($this->status), Excel::XLSX), 'Pending Acceptance Notification-' . $this->status->value . '.xlsx'),
+            Attachment::fromData(fn () => ExcelExport::raw(new PendingAcceptanceNotificationExport($this->status), Excel::XLSX), 'Pending Acceptance Notification-'.$this->status->value.'.xlsx'),
         ];
     }
 }

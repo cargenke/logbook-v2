@@ -14,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::table('logbook_profiles', function (Blueprint $table) {
-            $table->integer('isAllocated')->nullable()->comment("0=>No,1=>Yes, For registration");
+            $table->integer('isAllocated')->nullable()->comment('0=>No,1=>Yes, For registration');
             $table->integer('allocatedBy')->nullable();
             $table->dateTime('allocatedOn')->nullable();
-            $table->integer('isAvailable')->nullable()->comment("0=>No,1=>Yes,For Logbook");
-            $table->integer('isReturned')->nullable()->comment("0=>No,1=>Yes,For Credit Notes Done	");
+            $table->integer('isAvailable')->nullable()->comment('0=>No,1=>Yes,For Logbook');
+            $table->integer('isReturned')->nullable()->comment('0=>No,1=>Yes,For Credit Notes Done	');
             $table->integer('returnedBy')->nullable();
             $table->dateTime('returnedOn')->nullable();
             $table->dateTime('packingListCreatedOn')->nullable();

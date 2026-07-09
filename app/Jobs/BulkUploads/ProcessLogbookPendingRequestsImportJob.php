@@ -25,7 +25,9 @@ use Maatwebsite\Excel\Facades\Excel;
 class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     protected $filePath;
+
     protected $user_id;
 
     /**
@@ -58,18 +60,18 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
 
             foreach ($data as $index => $row) {
 
-                $requiredFields = ['chasis_number', 'reg_number', 'status',];
+                $requiredFields = ['chasis_number', 'reg_number', 'status'];
 
                 foreach ($requiredFields as $field) {
-                    if (!isset($row[$field]) || trim($row[$field]) === '') {
+                    if (! isset($row[$field]) || trim($row[$field]) === '') {
 
                         $message = "The field {$field} is required and cannot be empty. Row {$index} is blank. Upload aborted.";
 
-                       // SendLbPendingRequestsImportErrorNotificationJob::dispatch($message, $user);
+                        // SendLbPendingRequestsImportErrorNotificationJob::dispatch($message, $user);
 
                         UploadProcessLog::where('file_name', $this->filePath)
                             ->update([
-                                'status' => 0
+                                'status' => 0,
                             ]);
 
                         // Delete the temporary file
@@ -83,7 +85,6 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
                     }
                 }
 
-
                 // Validate status: must be 1 and numeric
                 $status = $row['status'];
 
@@ -91,8 +92,7 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
 
                     $message = "Status must be 1 and numeric. Row {$index} with {$status} found. Upload aborted.";
 
-
-                  //  SendLbPendingRequestsImportErrorNotificationJob::dispatch($message, $user);
+                    //  SendLbPendingRequestsImportErrorNotificationJob::dispatch($message, $user);
 
                     // Delete the temporary file
                     if (Storage::exists($this->filePath)) {
@@ -104,7 +104,6 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
                     return;
                 }
             }
-
 
             $successfull = [];
             $failed = [];
@@ -122,7 +121,6 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
                     $logbook = Logbook::where('chasisNumber', $chasisNumber)->first();
                     $systemstatus = SystemStatus::where('id', $status)->first();
 
-
                     if ($logbook) {
 
                         Logbook::where('chasisNumber', $chasisNumber)
@@ -130,7 +128,7 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
                                 [
                                     'status' => $status,
                                     'editedOn' => now(),
-                                    'editedBy' => $this->user_id
+                                    'editedBy' => $this->user_id,
                                 ]
                             );
 
@@ -139,7 +137,7 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
                                 [
                                     'status' => $status,
                                     'editedOn' => now(),
-                                    'editedBy' => $this->user_id
+                                    'editedBy' => $this->user_id,
 
                                 ]
                             );
@@ -151,7 +149,7 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
                             'status' => 'Success',
                             'remarks' => 'Pending Request Successfull',
                             'createdOn' => Carbon::now(),
-                            'createdBy' => $this->user_id
+                            'createdBy' => $this->user_id,
                         ]);
 
                         array_push($successfull, $successfuluploads);
@@ -166,40 +164,40 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
                             'status' => 'Failed',
                             'remarks' => "Logbook with chasisNumber {$chasisNumber} does not exist",
                             'createdOn' => Carbon::now(),
-                            'createdBy' => $this->user_id
+                            'createdBy' => $this->user_id,
                         ]);
 
                         array_push($failed, $faileduploads);
                     }
 
-                    if (!$logbook) {
-                       $data = Logbook::firstOrCreate(
+                    if (! $logbook) {
+                        $data = Logbook::firstOrCreate(
                             [
-                                'chasisNumber' => $chasisNumber
+                                'chasisNumber' => $chasisNumber,
                             ],
                             [
-                                
+
                                 'data_source' => 'SCALA',
                                 'status' => $status,
                                 'createdOn' => now(),
-                                'creatededBy' => $this->user_id
+                                'creatededBy' => $this->user_id,
                             ]
                         );
 
                         $data = LogbookProfile::firstOrCreate(
                             [
-                                'chasisNumber' => $chasisNumber
+                                'chasisNumber' => $chasisNumber,
                             ],
                             [
                                 'logbook_id' => $data->id,
                                 'data_source' => 'SCALA',
                                 'status' => $status,
                                 'createdOn' => now(),
-                                'creatededBy' => $this->user_id
+                                'creatededBy' => $this->user_id,
                             ]
                         );
 
-                        Log::info("Scala Data Created Successfully" . $data->chasisNumber);
+                        Log::info('Scala Data Created Successfully'.$data->chasisNumber);
 
                         $successfuluploadsdata = UploadedDataLog::create([
                             'name' => $systemstatus->name,
@@ -208,17 +206,16 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
                             'status' => 'Success',
                             'remarks' => 'Pending Request Successfull - SCALA DATA',
                             'createdOn' => Carbon::now(),
-                            'createdBy' => $this->user_id
+                            'createdBy' => $this->user_id,
                         ]);
 
                         array_push($successfull, $successfuluploadsdata);
                     }
 
-
                     DB::commit();
                 } catch (Exception $e) {
                     DB::rollBack();
-                    Log::error('Error processing requests uploads: ' . $e->getMessage());
+                    Log::error('Error processing requests uploads: '.$e->getMessage());
                 }
 
                 continue;
@@ -227,23 +224,23 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
 
             UploadProcessLog::where('file_name', $this->filePath)
                 ->update([
-                    'status' => 0
+                    'status' => 0,
                 ]);
 
-            Log::error('Error importing file: ' . $e->getMessage());
+            Log::error('Error importing file: '.$e->getMessage());
             // throw $e;
         }
 
         UploadProcessLog::where('file_name', $this->filePath)
             ->update([
-                'status' => 0
+                'status' => 0,
             ]);
 
         $uploadresults = array_merge($successfull, $failed);
 
         if (count($uploadresults) > 0) {
             // Generate a unique filename
-            $fileName = Carbon::now()->format('Y-m-d_H-i-s') . ' Pending Requests Data Upload Results By ' . $user->name . '.xlsx';
+            $fileName = Carbon::now()->format('Y-m-d_H-i-s').' Pending Requests Data Upload Results By '.$user->name.'.xlsx';
 
             // Use disk method to ensure correct storage
             $disk = Storage::disk('local');
@@ -257,10 +254,10 @@ class ProcessLogbookPendingRequestsImportJob implements ShouldQueue
 
             try {
 
-              //  SendLbPendingRequestsImportSuccessNotificationJob::dispatch($user, $fullPath);
-            } catch (\Exception $e) {
+                //  SendLbPendingRequestsImportSuccessNotificationJob::dispatch($user, $fullPath);
+            } catch (Exception $e) {
 
-                Log::error("Failed to send email to user {$user->email}: " . $e->getMessage());
+                Log::error("Failed to send email to user {$user->email}: ".$e->getMessage());
 
                 // Attempt to delete the file even if email fails
                 $disk->delete($storagePath);

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-
 use App\Actions\LogbookActions\UpdateLogbookInfoAction;
 use App\Http\Controllers\Controller;
 use App\Models\LogbookProfile;
@@ -24,16 +23,17 @@ class APILogbookDataController extends Controller
                     ->whereNotNull('DocNum')
                     ->first();
 
-                if (!$exlb) {
+                if (! $exlb) {
                     (new UpdateLogbookInfoAction($val))->handle();
                 }
 
             }
 
-            return (new ApiResponseService())->apiSucccessResponse("Created");
+            return (new ApiResponseService)->apiSucccessResponse('Created');
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
-            return (new ApiResponseService())->apiFailedResponse($th->getMessage());
+
+            return (new ApiResponseService)->apiFailedResponse($th->getMessage());
         }
     }
 }

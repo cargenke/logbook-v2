@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Pages;
 
 use App\Actions\LogbookActions\GetChasisInfoAction;
@@ -6,7 +7,6 @@ use App\Actions\LogbookActions\UpdateLogbookInfoAction;
 use App\Enums\UploadProcessTypeEnum;
 use App\Exports\TemplateExports\LogbooksPendingRequestTemplateExport;
 use App\Models\UploadProcessLog;
-use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
@@ -18,15 +18,14 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use UnitEnum;
 
 class Acceptance extends Page implements HasTable
 {
-
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.acceptance';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowRight;
@@ -51,16 +50,16 @@ class Acceptance extends Page implements HasTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-m-x-mark',
                         '1' => 'heroicon-m-check',
 
                     })
-                    ->formatStateUsing(fn(string $state): mixed => match ($state) {
+                    ->formatStateUsing(fn (string $state): mixed => match ($state) {
                         '0' => 'Processing',
                         '1' => 'Processed',
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'success',
                     }),
@@ -82,25 +81,22 @@ class Acceptance extends Page implements HasTable
     {
         return [
 
+            Action::make('download')
+                ->label('Download Template')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->tooltip('Download hatching summary')
+                ->action(function () {
 
-          Action::make('download')
-            ->label('Download Template')
-            ->icon('heroicon-o-arrow-down-tray')
-            ->tooltip('Download hatching summary')
-            ->action(function () {
+                    return Excel::download(
+                        new LogbooksPendingRequestTemplateExport([[
+                            'chasis_number' => '',
+                            'reg_number' => '',
+                            'status' => '',
+                        ]]),
+                        'Direct Transfer Template.xlsx'
+                    );
 
-                return Excel::download(
-                    new LogbooksPendingRequestTemplateExport([[
-                        'chasis_number' => '',
-                        'reg_number' => '',
-                        'status' => '',
-                    ]]),
-                    'Direct Transfer Template.xlsx'
-                );
-
-            }),
-
-
+                }),
 
             Action::make('Add New Request')
                 ->label('Upload Direct Transfer')
@@ -123,7 +119,6 @@ class Acceptance extends Page implements HasTable
                 ])
                 ->action(function (array $data) {
 
-
                     try {
                         $record = UploadProcessLog::create([
                             'name' => $data['name'],
@@ -135,20 +130,18 @@ class Acceptance extends Page implements HasTable
                             'createdBy' => auth()->id(),
                         ]);
 
-
-
                         $logbookInfo = (new GetChasisInfoAction($record['name']))->handle();
 
-                        if (!$logbookInfo) {
+                        if (! $logbookInfo) {
                             Notification::make()
                                 ->title('No logbook information found for the provided chassis number')
                                 ->danger()
                                 ->send();
+
                             return;
                         }
 
-
-                        Log::info("Logbook info retrieved: " . json_encode($logbookInfo));
+                        Log::info('Logbook info retrieved: '.json_encode($logbookInfo));
 
                         (new UpdateLogbookInfoAction($logbookInfo))->handle();
 
@@ -157,23 +150,18 @@ class Acceptance extends Page implements HasTable
                             ->success()
                             ->send();
 
-
                         $record->update([
                             'status' => 1,
                         ]);
-
-
 
                         Notification::make()
                             ->title('Upload started successfully')
                             ->success()
                             ->send();
 
-
-
                     } catch (\Throwable $th) {
 
-                        Log::info("Error uploading file: " . $th);
+                        Log::info('Error uploading file: '.$th);
                         Notification::make()
                             ->title('Adding New Request Failed')
                             ->danger()
@@ -199,10 +187,8 @@ class Acceptance extends Page implements HasTable
             ->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
     }
 
-    
-   public static function canAccess(): bool
+    public static function canAccess(): bool
     {
         return auth()->user()->hasRole('SuperAdmin');
     }
-
 }

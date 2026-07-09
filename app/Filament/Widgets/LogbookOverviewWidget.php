@@ -12,6 +12,7 @@ class LogbookOverviewWidget extends StatsOverviewWidget
     protected function getStats(): array
     {
         $logbookQuery = LogbookProfile::query();
+
         return [
             Stat::make('Pending', number_format($logbookQuery->where('status', LogBookStatusEnum::PENDING->value)->count()))
                 ->descriptionIcon('heroicon-m-paper-airplane')
@@ -30,7 +31,7 @@ class LogbookOverviewWidget extends StatsOverviewWidget
                 ->description('With Issues')
                 ->color(LogBookStatusEnum::WITH_ISSUES->color()),
 
-              Stat::make('Direct Trasfer', number_format(LogbookProfile::where('status', LogBookStatusEnum::DIRECT_REGISTRATION->value)->count()))
+            Stat::make('Direct Trasfer', number_format(LogbookProfile::where('status', LogBookStatusEnum::DIRECT_REGISTRATION->value)->count()))
                 ->descriptionIcon('heroicon-m-arrow-right')
                 ->description('Direct Trasfer')
                 ->color(LogBookStatusEnum::DIRECT_REGISTRATION->color()),

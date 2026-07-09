@@ -4,7 +4,6 @@ namespace App\Actions\LogbookActions\HelperActions;
 
 use App\Enums\LogBookStatusEnum;
 use App\Models\LogbookProfile;
-use Carbon\Carbon;
 
 class UpdateLogbookProfileStatusAction
 {
@@ -16,13 +15,13 @@ class UpdateLogbookProfileStatusAction
     public function handle()
     {
 
-        if (!$this->logbookProfile->status) {
+        if (! $this->logbookProfile->status) {
             $this->logbookProfile->update([
-                'status' => 1
+                'status' => 1,
             ]);
 
             $this->logbookProfile->update([
-                'status' => 1
+                'status' => 1,
             ]);
 
             return true;
@@ -33,11 +32,11 @@ class UpdateLogbookProfileStatusAction
         }
 
         $this->logbookProfile->update([
-            'status' => 1
+            'status' => 1,
         ]);
 
         $this->logbookProfile->update([
-            'status' => 1
+            'status' => 1,
         ]);
     }
 }

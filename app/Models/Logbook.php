@@ -12,8 +12,8 @@ class Logbook extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $table = 'logbooks';
 
+    protected $table = 'logbooks';
 
     public function system_status(): BelongsTo
     {
@@ -27,7 +27,7 @@ class Logbook extends Model
 
     // public function request() : HasOne
     // {
-    //     return $this->hasOne(LogbookRequest::class, 'logbook_id');    
+    //     return $this->hasOne(LogbookRequest::class, 'logbook_id');
     // }
 
     public function logbook_profile(): BelongsTo
@@ -42,7 +42,7 @@ class Logbook extends Model
 
     // public function logbook_profile() : HasOne
     // {
-    //     return $this->hasOne(LogbookProfile::class, 'logbook_id');    
+    //     return $this->hasOne(LogbookProfile::class, 'logbook_id');
     // }
 
 }

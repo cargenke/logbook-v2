@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::table('export_files', function (Blueprint $table) {
             $table->string('moduleName')->after('status')->nullable();
-            $table->integer('createdBy')->after('moduleName')->nullable();            
-            $table->dateTime('createdOn')->after('createdBy')->nullable();            
+            $table->integer('createdBy')->after('moduleName')->nullable();
+            $table->dateTime('createdOn')->after('createdBy')->nullable();
         });
     }
 

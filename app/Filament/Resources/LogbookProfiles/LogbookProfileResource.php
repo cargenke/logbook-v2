@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\LogbookProfiles;
 
 use App\Filament\Resources\LogbookProfiles\Pages\CreateLogbookProfile;
-use App\Filament\Resources\LogbookProfiles\Pages\EditLogbookProfile;
 use App\Filament\Resources\LogbookProfiles\Pages\ListLogbookProfiles;
 use App\Filament\Resources\LogbookProfiles\Pages\LogbookInfo;
 use App\Filament\Resources\LogbookProfiles\Pages\ViewLogbookProfile;
@@ -23,6 +22,7 @@ class LogbookProfileResource extends Resource
     protected static ?string $model = LogbookProfile::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::PaperClip;
+
     protected static string|UnitEnum|null $navigationGroup = 'Logbook Management';
 
     protected static ?string $recordTitleAttribute = 'Logbooks';
@@ -31,10 +31,7 @@ class LogbookProfileResource extends Resource
 
     protected static ?string $modelLabel = 'Logbooks';
 
-
- protected static ?int $navigationSort = 1;
-
-
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -58,7 +55,6 @@ class LogbookProfileResource extends Resource
         ];
     }
 
-  
     public static function getPages(): array
     {
         return [

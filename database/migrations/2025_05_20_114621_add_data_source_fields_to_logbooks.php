@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('logbooks', function (Blueprint $table) {
-             $table->string('data_source',50)->nullable();
+            $table->string('data_source', 50)->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('logbooks', function (Blueprint $table) {
-           $table->string('data_source')->nullable();
+            $table->string('data_source')->nullable();
         });
     }
 };

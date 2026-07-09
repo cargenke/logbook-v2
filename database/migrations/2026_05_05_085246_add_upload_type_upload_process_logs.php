@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('upload_process_logs', function (Blueprint $table) {
-            $table->integer('process_type')->default(0)->comment("0=Bulk Upload Request, 1=Update Request,3=Dispatched,8=Direct Trasfer Upload,");
+            $table->integer('process_type')->default(0)->comment('0=Bulk Upload Request, 1=Update Request,3=Dispatched,8=Direct Trasfer Upload,');
         });
     }
 

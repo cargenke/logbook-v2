@@ -2,23 +2,19 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class BridgeServiceProvider
 {
-
-
     /**
-     *
      * Post Data
-     *
      */
     public function getAccessToken()
     {
 
-        $fullUrl = env('BRIDGE_BASEURL') . '/login';
+        $fullUrl = env('BRIDGE_BASEURL').'/login';
         $userName = env('BRIDGE_USERNAME');
         $password = env('BRIDGE_PASSWORD');
 
@@ -34,32 +30,26 @@ class BridgeServiceProvider
             ->post($fullUrl, $data);
 
         if ($response->failed()) {
-            Log::info("Failed Posting to following URL: " . $fullUrl);
+            Log::info('Failed Posting to following URL: '.$fullUrl);
             Log::info(json_encode($response->body()));
             exit;
         }
 
-
         Cache::put('BRIDGE_TOKEN', $response['access_token']);
         $token = Cache::get('BRIDGE_TOKEN');
+
         return $response['access_token'];
     }
 
-
     /**
-     *
      * Post Data
-     *
      */
     public function postData(string $apiUrl, array $data)
     {
 
-
         $token = $this->getAccessToken();
 
-        $fullUrl = env('BRIDGE_BASEURL') . $apiUrl;
-
- 
+        $fullUrl = env('BRIDGE_BASEURL').$apiUrl;
 
         $response = Http::withoutVerifying()
             ->connectTimeout(35)
@@ -71,31 +61,26 @@ class BridgeServiceProvider
         if ($response->unauthorized()) {
 
             Log::info($apiUrl);
-            Log::info("Auth Not Legit");
+            Log::info('Auth Not Legit');
             $this->getAccessToken();
             $response = $this->postData($apiUrl, $data);
         }
 
-
         if ($response->failed()) {
-            Log::info("Failed Posting to following URL: " . $apiUrl);
+            Log::info('Failed Posting to following URL: '.$apiUrl);
             Log::info(json_encode($response->body()));
         }
 
- 
         return $response['ResultData'] ?? null;
     }
 
-
     /**
-     *
      * Post Data
-     *
      */
     public function postDataV2(string $apiUrl, string $token, array $data)
     {
 
-        $fullUrl = env('BRIDGE_BASEURL') . $apiUrl;
+        $fullUrl = env('BRIDGE_BASEURL').$apiUrl;
 
         $response = Http::withoutVerifying()
             ->connectTimeout(35)
@@ -103,29 +88,26 @@ class BridgeServiceProvider
             ->withToken($token)
             ->post($fullUrl, $data);
         if ($response->failed()) {
-            Log::info("Failed Posting to following URL: " . $apiUrl);
+            Log::info('Failed Posting to following URL: '.$apiUrl);
             Log::info(json_encode($response->body()));
             throw new \ErrorException($response->body());
         }
     }
 
     /**
-     *
      * Get Data
-     *
      */
     public function getData(string $apiUrl)
     {
 
-
         $token = Cache::get('BRIDGE_TOKEN');
-        if (!$token) {
+        if (! $token) {
             $this->getAccessToken();
         }
 
         $token = Cache::get('BRIDGE_TOKEN');
 
-        $fullUrl = env('BRIDGE_BASEURL') . $apiUrl;
+        $fullUrl = env('BRIDGE_BASEURL').$apiUrl;
 
         $response = Http::withoutVerifying()
             ->connectTimeout(15)
@@ -138,7 +120,7 @@ class BridgeServiceProvider
             $response = $this->getData($apiUrl);
         }
         if ($response->failed()) {
-            Log::info("Failed Posting to following URL: " . $apiUrl);
+            Log::info('Failed Posting to following URL: '.$apiUrl);
             Log::info(json_encode($response->body()));
         }
 
@@ -146,17 +128,14 @@ class BridgeServiceProvider
     }
 
     /**
-     *
      * Post Data
-     *
      */
     public function getDataV2(string $apiUrl, string $token)
     {
 
-
         $token = $token;
 
-        $fullUrl = env('SAP_SERVICE_LAYER_URL') . $apiUrl;
+        $fullUrl = env('SAP_SERVICE_LAYER_URL').$apiUrl;
 
         $response = Http::withoutVerifying()
             ->connectTimeout(15)
@@ -164,14 +143,12 @@ class BridgeServiceProvider
             ->withToken($token)
             ->get($fullUrl);
 
-
-
         if ($response->unauthorized()) {
             $this->getAccessToken();
             $response = $this->getData($apiUrl);
         }
         if ($response->failed()) {
-            Log::info("Failed Posting to following URL: " . $apiUrl);
+            Log::info('Failed Posting to following URL: '.$apiUrl);
             Log::info(json_encode($response->body()));
         }
 

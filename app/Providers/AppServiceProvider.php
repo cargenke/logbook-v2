@@ -21,12 +21,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         FilamentColor::register([
+        FilamentColor::register([
             'indigo' => Color::Indigo,
             'cyan' => Color::Cyan,
             'orange' => Color::Orange,
             'green' => Color::Green,
-            'fuchsia' => Color::Fuchsia
+            'fuchsia' => Color::Fuchsia,
         ]);
     }
 }

@@ -1,17 +1,13 @@
 <?php
+
 namespace App\Filament\Pages;
 
-use App\Actions\LogbookActions\GetChasisInfoAction;
-use App\Actions\LogbookActions\UpdateLogbookInfoAction;
 use App\Enums\UploadProcessTypeEnum;
 use App\Exports\TemplateExports\LogbooksPendingRequestTemplateExport;
 use App\Models\UploadProcessLog;
-use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -19,7 +15,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -27,8 +22,8 @@ use UnitEnum;
 
 class DirectTransfer extends Page implements HasTable
 {
-
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.direct-transfer';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowRight;
@@ -42,7 +37,7 @@ class DirectTransfer extends Page implements HasTable
         return $table
             ->query($this->getBaseQuery()) // your model here
             ->columns([
-                    TextColumn::make('id')
+                TextColumn::make('id')
                     ->label('#'),
                 TextColumn::make('creator.name')
                     ->label('Uploaded By')
@@ -53,20 +48,19 @@ class DirectTransfer extends Page implements HasTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-m-arrow-path',
                         '1' => 'heroicon-m-check',
 
                     })
-                    ->formatStateUsing(fn(string $state): mixed => match ($state) {
+                    ->formatStateUsing(fn (string $state): mixed => match ($state) {
                         '0' => 'Processing',
                         '1' => 'Processed',
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'success',
                     }),
-
 
             ])
             ->defaultSort('id', 'desc')
@@ -77,24 +71,23 @@ class DirectTransfer extends Page implements HasTable
                 Action::make('download')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->label('Download File')
-                    ->url(fn($record) => Storage::disk('s3')->temporaryUrl(
+                    ->url(fn ($record) => Storage::disk('s3')->temporaryUrl(
                         $record->file_name,
                         now()->addMinutes(5),
                         [
-                            'ResponseContentDisposition' => 'attachment; filename="' . basename($record->file) . '"',
+                            'ResponseContentDisposition' => 'attachment; filename="'.basename($record->file).'"',
                         ]
                     ))
                     ->openUrlInNewTab(),
             ])
             ->bulkActions([
-                
+
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-
 
             Action::make('download')
                 ->label('Download Template')
@@ -108,20 +101,17 @@ class DirectTransfer extends Page implements HasTable
                                 'chasis_number' => '',
                                 'reg_number' => '',
                                 'status' => '',
-                            ]
+                            ],
                         ]),
                         'Direct Transfer Template.xlsx'
                     );
 
                 }),
 
-
-
             Action::make('Add New Request')
                 ->label('Upload Direct Transfer')
                 ->icon('heroicon-o-arrow-up-tray')
                 ->form([
-
 
                     FileUpload::make('file')
                         ->required()
@@ -131,17 +121,14 @@ class DirectTransfer extends Page implements HasTable
                         ])
                         ->directory('bulk-uploads'),
 
-
-
                 ])
                 ->action(function (array $data) {
 
                     $filePath = $data['file'];
 
-
                     try {
                         $record = UploadProcessLog::create([
-                            'name' => "Direct Transfer Upload",
+                            'name' => 'Direct Transfer Upload',
                             'file_name' => $filePath,
                             'user_id' => auth()->id(),
                             'status' => 0,
@@ -150,18 +137,14 @@ class DirectTransfer extends Page implements HasTable
                             'createdBy' => auth()->id(),
                         ]);
 
-
-                    
-
                         Notification::make()
                             ->title('Upload started successfully')
                             ->success()
                             ->send();
 
-
                     } catch (\Throwable $th) {
 
-                        Log::info("Error uploading file: " . $th);
+                        Log::info('Error uploading file: '.$th);
                         Notification::make()
                             ->title('Adding New Request Failed')
                             ->danger()
@@ -187,10 +170,8 @@ class DirectTransfer extends Page implements HasTable
             ->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
     }
 
-
     public static function canAccess(): bool
     {
         return auth()->user()->hasRole('SuperAdmin');
     }
-
 }

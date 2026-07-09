@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models;
 
-use App\Models\LogbookRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,8 @@ class LogbookProfile extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $table   = 'logbook_profiles';
+
+    protected $table = 'logbook_profiles';
 
     protected static function booted()
     {
@@ -63,7 +64,7 @@ class LogbookProfile extends Model
             if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
                 return;
             }
-            //$builder->whereNotIn('groupCode', ['direct_transfer']);
+            // $builder->whereNotIn('groupCode', ['direct_transfer']);
 
             $builder->where(function ($q) {
                 $q->whereNull('groupCode')
@@ -76,7 +77,7 @@ class LogbookProfile extends Model
         });
 
         static::addGlobalScope('onlyStatus', function ($builder) {
-            $builder->whereIn('status', [1, 2, 3, 4, 5, 6,7]);
+            $builder->whereIn('status', [1, 2, 3, 4, 5, 6, 7]);
         });
 
         static::addGlobalScope('onlyChasisLinkedToPin', function ($builder) {

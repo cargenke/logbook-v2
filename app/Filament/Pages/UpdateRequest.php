@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Pages;
 
 use App\Actions\LogbookActions\GetChasisInfoAction;
@@ -21,8 +22,8 @@ use UnitEnum;
 
 class UpdateRequest extends Page implements HasTable
 {
-
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.update-request';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Pencil;
@@ -47,21 +48,21 @@ class UpdateRequest extends Page implements HasTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->tooltip(fn($record) => new HtmlString("
+                    ->tooltip(fn ($record) => new HtmlString('
         <strong>Remarks:</strong><br>
-        " . ($record->remarks ?: 'No remarks available')
+        '.($record->remarks ?: 'No remarks available')
                     ))
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         '2' => 'heroicon-m-x-mark',
                         '1' => 'heroicon-m-x-mark',
                         '0' => 'heroicon-m-check',
                     })
-                    ->formatStateUsing(fn(string $state): mixed => match ($state) {
+                    ->formatStateUsing(fn (string $state): mixed => match ($state) {
                         '2' => 'Failed',
                         '1' => 'Processing',
                         '0' => 'Processed',
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         '2' => 'danger',
                         '1' => 'primary',
                         '0' => 'success',
@@ -111,7 +112,6 @@ class UpdateRequest extends Page implements HasTable
                 ])
                 ->action(function (array $data) {
 
-
                     try {
                         $record = UploadProcessLog::create([
                             'name' => $data['name'],
@@ -123,17 +123,13 @@ class UpdateRequest extends Page implements HasTable
                             'createdBy' => auth()->id(),
                         ]);
 
-
-
                         $logbookInfo = (new GetChasisInfoAction($record['name']))->handle();
 
-                        if (!$logbookInfo) {
+                        if (! $logbookInfo) {
                             Notification::make()
                                 ->title('No logbook information found for the provided chassis number')
                                 ->danger()
                                 ->send();
-
-
 
                             $record->update([
                                 'status' => 2,
@@ -143,9 +139,6 @@ class UpdateRequest extends Page implements HasTable
                             return;
                         }
 
-
-
-
                         (new UpdateLogbookInfoAction($logbookInfo))->handle();
 
                         Notification::make()
@@ -153,28 +146,22 @@ class UpdateRequest extends Page implements HasTable
                             ->success()
                             ->send();
 
-
                         $record->update([
                             'status' => 0,
                         ]);
-
-
 
                         Notification::make()
                             ->title('Upload started successfully')
                             ->success()
                             ->send();
 
-
-
                     } catch (\Throwable $th) {
-
 
                         $record->update([
                             'status' => 1,
                         ]);
 
-                        Log::info("Error uploading file: " . $th);
+                        Log::info('Error uploading file: '.$th);
                         Notification::make()
                             ->title('Adding New Request Failed')
                             ->danger()
@@ -204,7 +191,7 @@ class UpdateRequest extends Page implements HasTable
     {
 
         return true;
+
         return auth()->user()->hasRole('SuperAdmin');
     }
-
 }

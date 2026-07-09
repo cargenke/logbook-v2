@@ -14,25 +14,25 @@ return new class extends Migration
     public function up()
     {
         Schema::table('main_mf', function (Blueprint $table) {
-            if (!Schema::hasColumn('main_mf', 'created_by')) {
-                $table->string('created_by')->nullable(); //registered by
+            if (! Schema::hasColumn('main_mf', 'created_by')) {
+                $table->string('created_by')->nullable(); // registered by
             }
-            if (!Schema::hasColumn('main_mf', 'invoice_no')) {
+            if (! Schema::hasColumn('main_mf', 'invoice_no')) {
                 $table->integer('invoice_no')->nullable();
             }
-            if (!Schema::hasColumn('main_mf', 'color')) {
+            if (! Schema::hasColumn('main_mf', 'color')) {
                 $table->string('color')->nullable();
             }
-            if (!Schema::hasColumn('main_mf', 'received_on')) {
+            if (! Schema::hasColumn('main_mf', 'received_on')) {
                 $table->string('received_on')->nullable();
             }
-            if (!Schema::hasColumn('main_mf', 'entry_no')) {
+            if (! Schema::hasColumn('main_mf', 'entry_no')) {
                 $table->string('entry_no')->nullable();
             }
-            if (!Schema::hasColumn('main_mf', 'PinNo')) {
+            if (! Schema::hasColumn('main_mf', 'PinNo')) {
                 $table->string('PinNo')->nullable();
             }
-            if (!Schema::hasColumn('main_mf', 'registered_owner')) {
+            if (! Schema::hasColumn('main_mf', 'registered_owner')) {
                 $table->string('registered_owner')->nullable();
             }
         });

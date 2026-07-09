@@ -25,9 +25,9 @@ class PendingAcceptanceNotificationExport implements FromCollection, ShouldAutoS
     public function collection()
     {
 
-        $fuellogs = LogbookProfile::where('status', $this->status)->get();
+        $logbooks = LogbookProfile::where('status', $this->status)->get();
 
-        return $this->records = $fuellogs;
+        return $this->records = $logbooks;
     }
 
     public function headings(): array
@@ -55,9 +55,8 @@ class PendingAcceptanceNotificationExport implements FromCollection, ShouldAutoS
             // Style the first row as bold
             1 => ['font' => ['bold' => true]],
 
-      
             // Add borders to all cells
-            'A1:C' . ($this->records->count() + 1) => [
+            'A1:C'.($this->records->count() + 1) => [
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
@@ -66,5 +65,4 @@ class PendingAcceptanceNotificationExport implements FromCollection, ShouldAutoS
             ],
         ];
     }
-
 }

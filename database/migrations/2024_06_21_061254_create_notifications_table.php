@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->integer('requester_id')->nullable()->comment("staff requesting transfer");;
-            $table->string('status_id')->nullable()->comment("from the system status");
-            $table->string('status')->nullable()->comment("success,failed");
+            $table->integer('requester_id')->nullable()->comment('staff requesting transfer');
+            $table->string('status_id')->nullable()->comment('from the system status');
+            $table->string('status')->nullable()->comment('success,failed');
             $table->string('notificationType')->nullable();
             $table->dateTime('createdOn')->nullable();
-            $table->integer('createdBy')->nullable()->comment("staff sending notification");
+            $table->integer('createdBy')->nullable()->comment('staff sending notification');
             $table->dateTime('updatedOn')->nullable();
             $table->integer('updatedBy')->nullable();
             $table->timestamps();

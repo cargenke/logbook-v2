@@ -4,7 +4,6 @@ namespace App\Filament\Resources\LogbookProfiles\Pages;
 
 use App\Filament\Resources\LogbookProfiles\LogbookProfileResource;
 use App\Models\LogbookRequest;
-use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewLogbookProfile extends ViewRecord
@@ -20,9 +19,8 @@ class ViewLogbookProfile extends ViewRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $logBookRequest =   LogbookRequest::where('chasisNumber', $this->record->chasisNumber)
+        $logBookRequest = LogbookRequest::where('chasisNumber', $this->record->chasisNumber)
             ->first();
-
 
         if ($logBookRequest) {
             $data['name1'] = $logBookRequest->name1;
@@ -37,9 +35,6 @@ class ViewLogbookProfile extends ViewRecord
         }
 
         return $data;
-
-
-
 
     }
 }

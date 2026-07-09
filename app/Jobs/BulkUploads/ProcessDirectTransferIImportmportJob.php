@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs\BulkUploads;
 
 use App\Enums\LogBookStatusEnum;
@@ -23,7 +24,9 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     protected $filePath;
+
     protected $user_id;
 
     /**
@@ -46,7 +49,7 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
     {
         $uploadProcessLog = $this->uploadProcessLog;
 
-        if (!Storage::disk('s3')->exists($uploadProcessLog->file_name)) {
+        if (! Storage::disk('s3')->exists($uploadProcessLog->file_name)) {
             dd($uploadProcessLog);
         }
 
@@ -64,7 +67,7 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
                 ->update([
                     'status' => 0,
                 ]);
-            Log::error('Error importing file: ' . $e);
+            Log::error('Error importing file: '.$e);
 
             return;
             // throw $e;
@@ -80,40 +83,41 @@ class ProcessDirectTransferIImportmportJob implements ShouldQueue
                 if (! $logbook) {
 
                     $faileduploads = UploadedDataLog::create([
-                        'name'         => 'Direct Transfer Update',
+                        'name' => 'Direct Transfer Update',
                         'chasisNumber' => $chasisNumber,
-                        'regNumber'    => $chasisNumber,
-                        'status'       => 'Failed',
-                        'remarks'      => "Logbook with chasisNumber {$chasisNumber} does not exist",
+                        'regNumber' => $chasisNumber,
+                        'status' => 'Failed',
+                        'remarks' => "Logbook with chasisNumber {$chasisNumber} does not exist",
                         'createdOn' => Carbon::now(),
                         'createdBy' => $uploadProcessLog->createdBy,
                     ]);
+
                     continue;
                 }
 
                 $successfuluploads = UploadedDataLog::create([
-                    'name'         => 'Direct Transfer Update',
+                    'name' => 'Direct Transfer Update',
                     'chasisNumber' => $chasisNumber,
-                    'regNumber'    => $chasisNumber,
-                    'status'       => 'Success',
-                    'remarks'      => 'Direct Transfer Updated Successfully',
-                    'createdOn'    => Carbon::now(),
-                    'createdBy'    => $uploadProcessLog->createdBy,
+                    'regNumber' => $chasisNumber,
+                    'status' => 'Success',
+                    'remarks' => 'Direct Transfer Updated Successfully',
+                    'createdOn' => Carbon::now(),
+                    'createdBy' => $uploadProcessLog->createdBy,
                 ]);
 
                 $logbook->update([
                     'groupCode' => 'direct_transfer',
-                    'status'    => LogBookStatusEnum::DIRECT_REGISTRATION->value,
+                    'status' => LogBookStatusEnum::DIRECT_REGISTRATION->value,
                 ]);
 
             } catch (\Throwable $th) {
 
                 $faileduploads = UploadedDataLog::create([
-                    'name'         => 'Direct Transfer Update',
+                    'name' => 'Direct Transfer Update',
                     'chasisNumber' => $chasisNumber,
-                    'regNumber'    => $chasisNumber,
-                    'status'       => 'Failed',
-                    'remarks'      => "{$chasisNumber} : {$th->getMessage()}",
+                    'regNumber' => $chasisNumber,
+                    'status' => 'Failed',
+                    'remarks' => "{$chasisNumber} : {$th->getMessage()}",
                     'createdOn' => Carbon::now(),
                     'createdBy' => $uploadProcessLog->createdBy,
                 ]);

@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
-use App\Models\Farm;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -34,8 +32,6 @@ class UserForm
                                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                                     ->dehydrated(fn ($state) => filled($state))
                                     ->password(),
-
-                         
 
                             ]),
 

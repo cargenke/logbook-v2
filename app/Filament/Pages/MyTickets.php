@@ -2,17 +2,12 @@
 
 namespace App\Filament\Pages;
 
-use App\Actions\LogbookActions\GetChasisInfoAction;
-use App\Actions\LogbookActions\UpdateLogbookInfoAction;
 use App\Enums\LogBookStatusEnum;
-use App\Enums\UploadProcessTypeEnum;
 use App\Models\Logbook;
 use App\Models\LogbookProfile;
 use App\Models\LogbookRequest;
-use App\Models\UploadProcessLog;
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -21,12 +16,12 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use UnitEnum;
 
 class MyTickets extends Page implements HasTable
 {
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.my-tickets';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Pencil;
@@ -39,6 +34,7 @@ class MyTickets extends Page implements HasTable
     {
         $isAdmin = auth()->user()?->hasAnyRole(['SuperAdmin', 'Admin']);
         $isOfficer = auth()->user()?->hasAnyRole(['SuperAdmin', 'Admin', 'RegOfficer']);
+
         return $table
             ->query($this->getBaseQuery())
             ->columns([
@@ -47,12 +43,11 @@ class MyTickets extends Page implements HasTable
                     ->label('Status')
                     ->badge()
                     ->formatStateUsing(
-                        fn($state) => LogBookStatusEnum::from($state)->label()
+                        fn ($state) => LogBookStatusEnum::from($state)->label()
                     )
                     ->color(
-                        fn($state) => LogBookStatusEnum::from($state)->color()
+                        fn ($state) => LogBookStatusEnum::from($state)->color()
                     ),
-
 
                 TextColumn::make('user.name')
                     ->label('Created On'),
@@ -60,20 +55,16 @@ class MyTickets extends Page implements HasTable
                 TextColumn::make('createdOn')
                     ->sortable(),
 
-
                 TextColumn::make('owner_display')
                     ->label('Customer Name')
                     ->getStateUsing(
-                        fn($record) =>
-                        $record->profile->CustomerName ?? $record->profile->NumAtCard
+                        fn ($record) => $record->profile->CustomerName ?? $record->profile->NumAtCard
                     ),
-
 
                 TextColumn::make('branch_dealer')
                     ->label('Branch/Dealer')
                     ->getStateUsing(
-                        fn($record) =>
-                        $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
+                        fn ($record) => $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
                     ),
 
                 TextColumn::make('chasisNumber')
@@ -84,7 +75,6 @@ class MyTickets extends Page implements HasTable
 
                 TextColumn::make('profile.regNumber')
                     ->label('Reg Number'),
-
 
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -107,11 +97,10 @@ class MyTickets extends Page implements HasTable
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
                     ->modalHeading('Change Status to accepted')
-                    ->visible(fn($record) => $record->status == LogBookStatusEnum::PENDING_ACCEPTANCE->value)
+                    ->visible(fn ($record) => $record->status == LogBookStatusEnum::PENDING_ACCEPTANCE->value)
                     ->modalDescription('Are you sure you want to change status of  this record?')
                     ->modalSubmitActionLabel('Yes, Change')
                     ->action(function (array $data, $record) {
-
 
                         DB::beginTransaction();
                         try {
@@ -124,11 +113,9 @@ class MyTickets extends Page implements HasTable
                                 'status' => LogBookStatusEnum::ACCEPTED,
                             ]);
 
-
                             $record->update([
                                 'status' => LogBookStatusEnum::ACCEPTED,
                             ]);
-
 
                             Notification::make()
                                 ->title('Status changed successfully')
@@ -139,7 +126,7 @@ class MyTickets extends Page implements HasTable
                         } catch (\Throwable $th) {
 
                             Notification::make()
-                                ->title('Something went wrong' . $th->getMessage())
+                                ->title('Something went wrong'.$th->getMessage())
                                 ->success()
                                 ->send();
 
@@ -167,5 +154,4 @@ class MyTickets extends Page implements HasTable
             ->where('createdBy', auth()->user()->id)
             ->where('is_instant_transfer', true);
     }
-
 }

@@ -5,7 +5,6 @@ namespace App\Filament\Resources\LogbookRequests;
 use App\Filament\Resources\LogbookRequests\Pages\CreateLogbookRequest;
 use App\Filament\Resources\LogbookRequests\Pages\EditLogbookRequest;
 use App\Filament\Resources\LogbookRequests\Pages\ListLogbookRequests;
-use App\Filament\Resources\LogbookRequests\Pages\TransferRequest;
 use App\Filament\Resources\LogbookRequests\Pages\ViewLogbookRequest;
 use App\Filament\Resources\LogbookRequests\Schemas\LogbookRequestForm;
 use App\Filament\Resources\LogbookRequests\Schemas\LogbookRequestInfolist;
@@ -32,8 +31,7 @@ class LogbookRequestResource extends Resource
 
     protected static ?string $modelLabel = 'Transfer Requests';
 
-     protected static ?int $navigationSort = 2;
-
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
@@ -64,7 +62,7 @@ class LogbookRequestResource extends Resource
             'create' => CreateLogbookRequest::route('/create'),
             'view' => ViewLogbookRequest::route('/{record}'),
             'edit' => EditLogbookRequest::route('/{record}/edit'),
-  
+
         ];
     }
 }

@@ -21,10 +21,10 @@ return new class extends Migration
             $table->string('attachmentURL')->nullable();
             $table->longText('remarks')->nullable();
             $table->dateTime('createdOn')->nullable();
-            $table->integer('createdBy')->nullable()->comment("");
+            $table->integer('createdBy')->nullable()->comment('');
             $table->dateTime('updatedOn')->nullable();
             $table->integer('updatedBy')->nullable();
-            $table->integer('requesterId')->nullable()->comment("");
+            $table->integer('requesterId')->nullable()->comment('');
             $table->timestamps();
         });
     }

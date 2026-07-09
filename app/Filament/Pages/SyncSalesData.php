@@ -19,12 +19,12 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Facades\Excel;
 use UnitEnum;
 
 class SyncSalesData extends Page implements HasTable
 {
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.sync-sales-data';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Link;
@@ -92,12 +92,11 @@ class SyncSalesData extends Page implements HasTable
                         ->label('Date')
                         ->required(),
 
-
                 ])
                 ->action(function (array $data) {
 
                     $record = UploadProcessLog::create([
-                        'name' => 'Sync Sales Data For: ' . $data['file_name'],
+                        'name' => 'Sync Sales Data For: '.$data['file_name'],
                         'file_name' => Carbon::parse($data['file_name'])->format('Ymd'),
                         'user_id' => auth()->id(),
                         'status' => -1,
@@ -106,19 +105,14 @@ class SyncSalesData extends Page implements HasTable
                         'createdBy' => auth()->id(),
                     ]);
 
-
-
                     try {
-
-
 
                         $logbooks = (new SyncChasisSalesDataAction($record->file_name))->handle();
 
                         Notification::make()
-                            ->title('Total Fetched : ' . count($logbooks))
+                            ->title('Total Fetched : '.count($logbooks))
                             ->success()
                             ->send();
-
 
                         foreach ($logbooks as $key => $logbookInfo) {
                             (new UpdateLogbookInfoAction($logbookInfo))->handle();
@@ -130,18 +124,18 @@ class SyncSalesData extends Page implements HasTable
                             ->send();
 
                         $record->update([
-                            'status' => 1
+                            'status' => 1,
                         ]);
 
                     } catch (\Throwable $th) {
 
                         $record->update([
-                            'status' => 0
+                            'status' => 0,
                         ]);
 
-                        Log::info("Error Creating Request: " . $th);
+                        Log::info('Error Creating Request: '.$th);
                         Notification::make()
-                            ->title('Erro Syncing Data: ' . $th->getMessage())
+                            ->title('Erro Syncing Data: '.$th->getMessage())
                             ->danger()
                             ->send();
                     }
@@ -165,10 +159,8 @@ class SyncSalesData extends Page implements HasTable
             ->where('process_type', UploadProcessTypeEnum::SYNC_SALES->value);
     }
 
-
     public static function canAccess(): bool
     {
         return auth()->user()->hasRole('SuperAdmin');
     }
-
 }

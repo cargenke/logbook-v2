@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('google_id')->nullable();
             $table->string('password')->nullable();
-            $table->integer('UserType')->default(0)->comment("0 = Normal User, 1 = Super Admin");
+            $table->integer('UserType')->default(0)->comment('0 = Normal User, 1 = Super Admin');
             $table->string('tel')->nullable();
             $table->integer('directory')->nullable();
             $table->string('job_position')->nullable();

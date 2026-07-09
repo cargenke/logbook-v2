@@ -1,27 +1,27 @@
 <?php
+
 namespace App\Filament\Pages;
 
 use App\Models\UploadedDataLog;
 use BackedEnum;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Maatwebsite\Excel\Facades\Excel;
 use UnitEnum;
 
 class SystemLog extends Page implements HasTable
 {
-
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.system-log';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ChatBubbleBottomCenterText;
 
     protected static string|UnitEnum|null $navigationGroup = 'Administration';
+
     protected static ?int $navigationSort = 4;
 
     public function table(Table $table): Table
@@ -48,8 +48,6 @@ class SystemLog extends Page implements HasTable
                     ->searchable()
                     ->label('Remarks'),
 
-
-
             ])
             ->defaultSort('id', 'desc')
             ->filters([
@@ -63,18 +61,14 @@ class SystemLog extends Page implements HasTable
             ]);
     }
 
-
     protected function getBaseQuery()
     {
 
-
         return UploadedDataLog::query();
     }
-
 
     public static function canAccess(): bool
     {
         return auth()->user()->hasRole('SuperAdmin');
     }
-
 }

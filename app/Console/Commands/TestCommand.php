@@ -24,36 +24,27 @@ class TestCommand extends Command
     public function handle()
     {
 
-    // $uploadProcessLog = UploadProcessLog::findOrFail(1530);
+        // $uploadProcessLog = UploadProcessLog::findOrFail(1530);
 
-    // (new ProcessDirectTransferIImportmportJob($uploadProcessLog))->handle();
+        // (new ProcessDirectTransferIImportmportJob($uploadProcessLog))->handle();
 
-    // dd("Done");
+        // dd("Done");
 
-    $user = Auth::loginUsingId(12);
-       $chasis = ' MD625NF57M1C03005';
+        $user = Auth::loginUsingId(12);
+        $chasis = ' MD625NF57M1C03005';
         $chasisInfo = (new GetChasisInfoAction($chasis))->handle();
 
         dd($chasisInfo);
 
+        $data = (new SyncChasisSalesDataAction('20260605'))->handle();
 
-          $data=   (new SyncChasisSalesDataAction('20260605'))->handle();
-    
+        dd($data);
 
-      dd($data);
+        $upload = UploadProcessLog::where('process_type', UploadProcessTypeEnum::PENDING_ACCEPTANCE->value)->first();
 
+        $filed = Storage::disk('s3')->exists($upload->file_name);
 
-
-    $upload = UploadProcessLog::where('process_type', UploadProcessTypeEnum::PENDING_ACCEPTANCE->value)->first();
-
-    
-   $filed = Storage::disk('s3')->exists($upload->file_name);
-
-
-    dd($filed);
-
-
-
+        dd($filed);
 
         $totalWithIssues = LogbookProfile::withoutGlobalScopes()->where('status', LogBookStatusEnum::WITH_ISSUES->value)
             ->doesntHave('request')
@@ -61,16 +52,11 @@ class TestCommand extends Command
                 'status' => LogBookStatusEnum::PENDING->value,
             ]);
 
-        
         $totalWithIssues = LogbookProfile::withoutGlobalScopes()->where('status', LogBookStatusEnum::PENDING_ACCEPTANCE->value)
             ->doesntHave('request')
             ->update([
                 'status' => LogBookStatusEnum::PENDING->value,
             ]);
 
-       
-    
-
-  
     }
 }

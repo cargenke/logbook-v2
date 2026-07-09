@@ -9,24 +9,21 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListLogbookProfiles extends ListRecords
 {
-        use ExposesTableToWidgets;
+    use ExposesTableToWidgets;
+
     protected static string $resource = LogbookProfileResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-          
+
         ];
     }
 
-
-     protected function getHeaderWidgets(): array
+    protected function getHeaderWidgets(): array
     {
         return [
-            LogbookStatOverView::class
+            LogbookStatOverView::class,
         ];
     }
-
-   
-    
 }
