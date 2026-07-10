@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('logbook_profiles', function (Blueprint $table) {
-            $table->string('dealer_location',50)->nullable();
+            $table->string('dealer_location', 50)->nullable();
         });
     }
 

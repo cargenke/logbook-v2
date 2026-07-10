@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\LogbookRequests\Widgets;
 
 use App\Enums\LogBookStatusEnum;
@@ -16,37 +17,31 @@ class LogbookRequestStatOverView extends StatsOverviewWidget
         return ListLogbookRequests::class;
     }
 
-    public function getHeaderWidgetsColumns(): int | array
+    public function getHeaderWidgetsColumns(): int|array
     {
         return 4;
     }
+
     protected function getStats(): array
     {
+        
         return [
 
-            Stat::make('Processing', number_format($this->getPageTableQuery()->whereHas('profile', function ($query) {
-                $query->where('status', LogBookStatusEnum::PROCESSING->value);
-            })->count()))
+            Stat::make('Processing', number_format($this->getPageTableQuery()->select('')->where('status', LogBookStatusEnum::PROCESSING->value)->count()))
                 ->descriptionIcon('heroicon-m-arrow-path-rounded-square')
                 ->description('Processing')
                 ->color(LogBookStatusEnum::PROCESSING->color()),
-            Stat::make('Pending Acceptance', number_format($this->getPageTableQuery()->whereHas('profile', function ($query) {
-                $query->where('status', LogBookStatusEnum::PENDING_ACCEPTANCE->value);
-            })->count()))
+            Stat::make('Pending Acceptance', number_format($this->getPageTableQuery()->where('status', LogBookStatusEnum::PENDING_ACCEPTANCE->value)->count()))
                 ->descriptionIcon('heroicon-m-clock')
                 ->description('Pending Acceptance')
                 ->color(LogBookStatusEnum::PENDING_ACCEPTANCE->color()),
 
-            Stat::make('With Issues', number_format($this->getPageTableQuery()->whereHas('profile', function ($query) {
-                $query->where('status', LogBookStatusEnum::WITH_ISSUES->value);
-            })->count()))
+            Stat::make('With Issues', number_format($this->getPageTableQuery()->where('status', LogBookStatusEnum::WITH_ISSUES->value)->count()))
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->description('With Issues')
                 ->color(LogBookStatusEnum::WITH_ISSUES->color()),
 
-            Stat::make('Dispatched', number_format($this->getPageTableQuery()->whereHas('profile', function ($query) {
-                $query->where('status', LogBookStatusEnum::DISPATCHED->value);
-            })->count()))
+            Stat::make('Dispatched', number_format($this->getPageTableQuery()->where('status', LogBookStatusEnum::DISPATCHED->value)->count()))
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->description('Dispatched')
                 ->color(LogBookStatusEnum::DISPATCHED->color()),

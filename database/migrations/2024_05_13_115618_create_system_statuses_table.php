@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('ObjType')->nullable();
             $table->string('name')->nullable();
-            $table->string('isActive')->default(1)->comment("0=>No,1=>Yes")->nullable();
+            $table->string('isActive')->default(1)->comment('0=>No,1=>Yes')->nullable();
             $table->dateTime('createdOn')->nullable();
             $table->string('createdBy')->nullable();
             $table->dateTime('editedOn')->nullable();

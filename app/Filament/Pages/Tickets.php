@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Pages;
 
 use App\Enums\LogBookStatusEnum;
@@ -24,6 +25,7 @@ use UnitEnum;
 class Tickets extends Page implements HasTable
 {
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.tickets';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Pencil;
@@ -36,6 +38,7 @@ class Tickets extends Page implements HasTable
     {
         $isAdmin = auth()->user()?->hasAnyRole(['SuperAdmin', 'Admin']);
         $isOfficer = auth()->user()?->hasAnyRole(['SuperAdmin', 'Admin', 'RegOfficer']);
+
         return $table
             ->query($this->getBaseQuery())
             ->columns([
@@ -44,10 +47,10 @@ class Tickets extends Page implements HasTable
                     ->label('Status')
                     ->badge()
                     ->formatStateUsing(
-                        fn($state) => LogBookStatusEnum::from($state)->label()
+                        fn ($state) => LogBookStatusEnum::from($state)->label()
                     )
                     ->color(
-                        fn($state) => LogBookStatusEnum::from($state)->color()
+                        fn ($state) => LogBookStatusEnum::from($state)->color()
                     ),
 
                 TextColumn::make('user.name')
@@ -62,24 +65,22 @@ class Tickets extends Page implements HasTable
                 TextColumn::make('owner_display')
                     ->label('Customer Name')
                     ->getStateUsing(
-                        fn($record) =>
-                        $record->profile->CustomerName ?? $record->profile->NumAtCard
+                        fn ($record) => $record->profile->CustomerName ?? $record->profile->NumAtCard
                     ),
 
                 TextColumn::make('branch_dealer')
                     ->label('Branch/Dealer')
                     ->getStateUsing(
-                        fn($record) =>
-                        $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
+                        fn ($record) => $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
                     ),
 
                 TextColumn::make('chasisNumber')
-                 
+
                     ->badge()
                     ->color('cyan')
-                     ->openUrlInNewTab()
+                    ->openUrlInNewTab()
                     ->url(
-                        fn($record) => $record->id
+                        fn ($record) => $record->id
                         ? LogbookRequestResource::getUrl('view', ['record' => $record->id])
                         : null
                     )
@@ -91,11 +92,10 @@ class Tickets extends Page implements HasTable
                 TextColumn::make('branch_display')
                     ->label('Branch/Dealer')
                     ->getStateUsing(
-                        fn($record) =>
-                        $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
+                        fn ($record) => $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
                     )
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->visible(fn() => $isAdmin),
+                    ->visible(fn () => $isAdmin),
 
                 TextColumn::make('user.name')
                     ->label('Requested By'),
@@ -130,7 +130,7 @@ class Tickets extends Page implements HasTable
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->modalHeading('Assing Ticket to')
-                    ->visible(fn($record) => $record->assign_to == null)
+                    ->visible(fn ($record) => $record->assign_to == null)
                     ->modalDescription('Are you sure you want to assign this record?')
                     ->modalSubmitActionLabel('Yes, Assign')
                     ->form([
@@ -138,7 +138,7 @@ class Tickets extends Page implements HasTable
                             ->label('Assign To')
                             ->options(
                                 User::role(['SuperAdmin'])
-                                ->where('isActive',true)
+                                    ->where('isActive', true)
                                     ->pluck('name', 'id')
                             )
                             ->searchable()
@@ -164,15 +164,14 @@ class Tickets extends Page implements HasTable
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
                     ->modalHeading('Change Status to Pending Acceptance')
-                    ->visible(fn($record) => $record->status == LogBookStatusEnum::PROCESSING->value)
+                    ->visible(fn ($record) => $record->status == LogBookStatusEnum::PROCESSING->value)
                     ->modalDescription('Are you sure you want to change status of  this record?')
                     ->modalSubmitActionLabel('Yes, Change')
                     ->action(function (array $data, $record) {
 
-
                         DB::beginTransaction();
                         try {
-                        
+
                             LogbookProfile::where('chasisNumber', $record->chasisNumber)->update([
                                 'status' => LogBookStatusEnum::PENDING_ACCEPTANCE,
                             ]);
@@ -181,11 +180,9 @@ class Tickets extends Page implements HasTable
                                 'status' => LogBookStatusEnum::PENDING_ACCEPTANCE,
                             ]);
 
-
                             $record->update([
                                 'status' => LogBookStatusEnum::PENDING_ACCEPTANCE,
                             ]);
-
 
                             Notification::make()
                                 ->title('Status changed successfully')
@@ -196,14 +193,12 @@ class Tickets extends Page implements HasTable
                         } catch (\Throwable $th) {
 
                             Notification::make()
-                                ->title('Something went wrong' . $th->getMessage())
+                                ->title('Something went wrong'.$th->getMessage())
                                 ->success()
                                 ->send();
 
                             DB::rollBack();
                         }
-
-
 
                     }),
             ])
@@ -235,5 +230,4 @@ class Tickets extends Page implements HasTable
     {
         return auth()->user()->hasRole('SuperAdmin');
     }
-
 }

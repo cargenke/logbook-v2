@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +11,8 @@ class UploadProcessLog extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $table   = 'upload_process_logs';
+
+    protected $table = 'upload_process_logs';
 
     public function creator(): BelongsTo
     {

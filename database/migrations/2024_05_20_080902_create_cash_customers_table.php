@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('cash_customers', function (Blueprint $table) {
             $table->id();
-            $table->string('CardCode')->nullable()->comment("customer code"); 
-            $table->string('CardName')->nullable()->comment("customer name"); 
-            $table->string('Location')->nullable()->comment("location"); 
-            $table->string('Active')->nullable()->comment("Y=>Yes, N=>No,Valid For"); 
+            $table->string('CardCode')->nullable()->comment('customer code');
+            $table->string('CardName')->nullable()->comment('customer name');
+            $table->string('Location')->nullable()->comment('location');
+            $table->string('Active')->nullable()->comment('Y=>Yes, N=>No,Valid For');
             $table->timestamps();
         });
     }

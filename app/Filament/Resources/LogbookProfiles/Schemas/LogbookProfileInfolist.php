@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\LogbookProfiles\Schemas;
 
-
 use Filament\Schemas\Schema;
 
 class LogbookProfileInfolist
@@ -11,9 +10,7 @@ class LogbookProfileInfolist
     {
         return $schema
             ->components([
-               
-          
-           
+
             ])->columns(3);
     }
 }

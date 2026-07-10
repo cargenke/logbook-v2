@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('logbook_requests', function (Blueprint $table) {
-            $table->string('branch',50)->nullable();
+            $table->string('branch', 50)->nullable();
         });
     }
 

@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('warranty_requests', function (Blueprint $table) {
-            $table->integer('error_code')->nullable()->comment("SAP Update Error Code");
-            $table->string('status')->nullable()->comment("SAP Update Status");
+            $table->integer('error_code')->nullable()->comment('SAP Update Error Code');
+            $table->string('status')->nullable()->comment('SAP Update Status');
         });
     }
 

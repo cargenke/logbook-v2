@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Actions\LogbookActions;
 
 use App\Models\Logbook;
@@ -9,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class ProcessFailedAllocationsAction
 {
-
     public function __construct(protected string $chasisNumber)
     {
         $this->chasisNumber = $chasisNumber;
@@ -24,12 +24,11 @@ class ProcessFailedAllocationsAction
             ->where('status', 'Failed')
             ->first();
 
-        if (!$log) {
-        Log::info('(DONE ON SALES/STOCK SYNC) There is no Failed Allocation ' . $chasisNumber . ' ' . $log?->regNumber);
+        if (! $log) {
+            Log::info('(DONE ON SALES/STOCK SYNC) There is no Failed Allocation '.$chasisNumber.' '.$log?->regNumber);
+
             return false;
         }
-
-      
 
         $updateValues = false;
 
@@ -42,9 +41,9 @@ class ProcessFailedAllocationsAction
         }
 
         $LogbookProfileWithNull = LogbookProfile::withoutGlobalScopes()
-        ->where('chasisNumber', $chasisNumber)
-        ->whereNull('regNumber')
-    ->first();
+            ->where('chasisNumber', $chasisNumber)
+            ->whereNull('regNumber')
+            ->first();
 
         if ($LogbookProfileWithNull) {
             $updateValues = true;
@@ -66,13 +65,13 @@ class ProcessFailedAllocationsAction
 
         UploadedDataLog::create(
             [
-                'name'         => 'Received LogBook/Allocation',
+                'name' => 'Received LogBook/Allocation',
                 'chasisNumber' => $chasisNumber,
-                'regNumber'    => $log?->regNumber,
-                'status'       => 'Success',
-                'remarks'      => 'Allocation Successfull',
-                'createdOn'    => Carbon::now(),
-                'createdBy'    => 1,
+                'regNumber' => $log?->regNumber,
+                'status' => 'Success',
+                'remarks' => 'Allocation Successfull',
+                'createdOn' => Carbon::now(),
+                'createdBy' => 1,
             ]
         );
 

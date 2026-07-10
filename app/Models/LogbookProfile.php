@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models;
 
-use App\Models\LogbookRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,13 +13,14 @@ class LogbookProfile extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $table   = 'logbook_profiles';
+
+    protected $table = 'logbook_profiles';
 
     protected static function booted()
     {
         static::addGlobalScope('excludeCashCustomer', function (Builder $builder) {
 
-            if (! auth()->user()?->hasAnyRole(['Financier'])) {
+            if (!auth()->user()?->hasAnyRole(['Financier'])) {
                 return;
             }
 
@@ -63,7 +64,6 @@ class LogbookProfile extends Model
             if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
                 return;
             }
-            //$builder->whereNotIn('groupCode', ['direct_transfer']);
 
             $builder->where(function ($q) {
                 $q->whereNull('groupCode')
@@ -71,21 +71,33 @@ class LogbookProfile extends Model
             });
 
         });
+
+
+
         static::addGlobalScope('cleanChasis', function ($builder) {
             $builder->where('chasisNumber', 'not like', '%.%');
         });
 
         static::addGlobalScope('onlyStatus', function ($builder) {
-            $builder->whereIn('status', [1, 2, 3, 4, 5, 6,7]);
+            $builder->whereIn('status', [1, 2, 3, 4, 5, 6, 7]);
         });
 
         static::addGlobalScope('onlyChasisLinkedToPin', function ($builder) {
 
-            if (! auth()->user()?->hasAnyRole(['Dealer', 'Customer'])) {
+            if (!auth()->user()?->hasAnyRole(['Dealer', 'Customer'])) {
                 return;
             }
 
             $builder->where('PinNo', auth()->user()?->pin_no);
+        });
+    }
+
+    public function scopeUniqueChasis(Builder $query): Builder
+    {
+        return $query->whereIn('id', function ($q) {
+            $q->selectRaw('MIN(id)')
+                ->from('logbook_profiles')
+                ->groupBy('chasisNumber');
         });
     }
 

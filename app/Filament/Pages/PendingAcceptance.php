@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Pages;
 
 use App\Enums\UploadProcessTypeEnum;
@@ -21,8 +22,8 @@ use UnitEnum;
 
 class PendingAcceptance extends Page implements HasTable
 {
-
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.pending-acceptance';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowRight;
@@ -47,16 +48,16 @@ class PendingAcceptance extends Page implements HasTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-m-x-mark',
                         '1' => 'heroicon-m-check',
 
                     })
-                    ->formatStateUsing(fn(string $state): mixed => match ($state) {
+                    ->formatStateUsing(fn (string $state): mixed => match ($state) {
                         '0' => 'Processing',
                         '1' => 'Processed',
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'success',
                     }),
@@ -78,7 +79,6 @@ class PendingAcceptance extends Page implements HasTable
     {
         return [
 
-
             Action::make('download')
                 ->label('Download Template')
                 ->icon('heroicon-o-arrow-down-tray')
@@ -91,14 +91,12 @@ class PendingAcceptance extends Page implements HasTable
                                 'chasis_number' => '',
                                 'reg_number' => '',
                                 'status' => '',
-                            ]
+                            ],
                         ]),
                         'Direct Transfer Template.xlsx'
                     );
 
                 }),
-
-
 
             Action::make('Add New Request')
                 ->label('Upload File')
@@ -116,13 +114,11 @@ class PendingAcceptance extends Page implements HasTable
                 ])
                 ->action(function (array $data) {
 
-
                     $filePath = $data['file'];
-
 
                     try {
                         $data = UploadProcessLog::create([
-                            'name' => "Pending Acceptance",
+                            'name' => 'Pending Acceptance',
                             'file_name' => $filePath,
                             'user_id' => auth()->id(),
                             'status' => 1, // Processing
@@ -131,15 +127,13 @@ class PendingAcceptance extends Page implements HasTable
                             'createdBy' => auth()->id(),
                         ]);
 
-
-
                         Notification::make()
                             ->title('Upload started successfully')
                             ->success()
                             ->send();
 
                     } catch (\Throwable $th) {
-                        Log::info("Error uploading file: " . $th->getMessage());
+                        Log::info('Error uploading file: '.$th->getMessage());
                         Notification::make()
                             ->title('Failed to start upload process')
                             ->danger()
@@ -165,10 +159,8 @@ class PendingAcceptance extends Page implements HasTable
             ->where('process_type', UploadProcessTypeEnum::PENDING_ACCEPTANCE->value);
     }
 
-
     public static function canAccess(): bool
     {
         return auth()->user()->hasRole('SuperAdmin');
     }
-
 }

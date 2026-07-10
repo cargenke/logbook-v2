@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\LogbookRequests\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
 class LogbookRequestInfolist
@@ -11,7 +10,7 @@ class LogbookRequestInfolist
     {
         return $schema
             ->components([
-        
+
             ]);
     }
 }

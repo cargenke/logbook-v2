@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\LogbookRequests\Pages;
 
 use App\Filament\Resources\LogbookRequests\LogbookRequestResource;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 

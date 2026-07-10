@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('regNumber')->nullable();
             $table->longText('notes')->nullable();
             $table->dateTime('createdOn')->nullable();
-            $table->integer('createdBy')->nullable()->comment("staff creating acceptance notes");
+            $table->integer('createdBy')->nullable()->comment('staff creating acceptance notes');
             $table->dateTime('updatedOn')->nullable();
             $table->integer('updatedBy')->nullable();
-            $table->integer('requesterId')->nullable()->comment("staff requesting transfer");
+            $table->integer('requesterId')->nullable()->comment('staff requesting transfer');
             $table->timestamps();
         });
     }

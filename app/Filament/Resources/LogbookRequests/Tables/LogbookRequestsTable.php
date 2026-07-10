@@ -4,7 +4,6 @@ namespace App\Filament\Resources\LogbookRequests\Tables;
 
 use App\Enums\LogBookStatusEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -18,6 +17,7 @@ class LogbookRequestsTable
 
         $isAdmin = auth()->user()?->hasAnyRole(['SuperAdmin', 'Admin']);
         $isOfficer = auth()->user()?->hasAnyRole(['SuperAdmin', 'Admin', 'RegOfficer']);
+
         return $table
             ->columns([
 
@@ -26,23 +26,17 @@ class LogbookRequestsTable
                     ->visible(fn () => $isAdmin)
                     ->label('Doc Date'),
 
+                TextColumn::make('owner_display')
+                    ->label('Customer Name')
+                    ->getStateUsing(
+                        fn ($record) => $record->profile->CustomerName ?? $record->profile->NumAtCard
+                    ),
 
                 TextColumn::make('owner_display')
                     ->label('Customer Name')
                     ->getStateUsing(
-                        fn ($record) =>
-                        $record->profile->CustomerName ?? $record->profile->NumAtCard
+                        fn ($record) => $record->profile->CustomerName ?? $record->profile?->NumAtCard ?? 'N/A'
                     ),
-
-
-
-                TextColumn::make('owner_display')
-                    ->label('Customer Name')
-                    ->getStateUsing(
-                        fn ($record) =>
-                        $record->profile->CustomerName ?? $record->profile?->NumAtCard ?? 'N/A'
-                    ),
-
 
                 TextColumn::make('chasisNumber')
                     ->copyable()
@@ -52,7 +46,6 @@ class LogbookRequestsTable
 
                 TextColumn::make('profile.regNumber')
                     ->label('Reg Number'),
-
 
                 TextColumn::make('profile.isAvailable')
                     ->label('LB Status')
@@ -65,8 +58,7 @@ class LogbookRequestsTable
                 TextColumn::make('branch_display')
                     ->label('Branch/Dealer')
                     ->getStateUsing(
-                        fn ($record) =>
-                        $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
+                        fn ($record) => $record->profile?->logbookOwner?->name ?? $record->profile?->Location ?? 'N/A'
                     )
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->visible(fn () => $isAdmin),
@@ -79,7 +71,7 @@ class LogbookRequestsTable
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->visible(fn () => $isAdmin),
 
-                   TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('Requested By'),
                 TextColumn::make('createdOn')
                     ->sortable()
@@ -104,7 +96,7 @@ class LogbookRequestsTable
                         collect(LogBookStatusEnum::cases())
                             // ->whereIn('value', [LogBookStatusEnum::PROCESSING,  LogBookStatusEnum::PENDING_ACCEPTANCE, LogBookStatusEnum::WITH_ISSUES])
                             ->mapWithKeys(fn ($case) => [
-                                $case->value => $case->label()
+                                $case->value => $case->label(),
                             ])
                             ->toArray()
                     )
@@ -114,7 +106,7 @@ class LogbookRequestsTable
                         LogBookStatusEnum::WITH_ISSUES,
                     ])
                     ->query(function ($query, array $data) {
-                        if (!filled($data['values'])) {
+                        if (! filled($data['values'])) {
                             return;
                         }
 

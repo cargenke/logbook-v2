@@ -19,12 +19,11 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Log;
 
 class LogbookInfo extends Page
 {
-    use InteractsWithRecord;
     use InteractsWithForms;
+    use InteractsWithRecord;
 
     protected static string $resource = LogbookProfileResource::class;
 
@@ -34,18 +33,18 @@ class LogbookInfo extends Page
 
     protected string $view = 'filament.resources.logbook-profiles.pages.logbook-info';
 
-    public function mount(int | string $record): void
+    public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
 
         $this->form->fill([
             'ChasisNumber' => $this->record->chasisNumber,
-            'RegNumber'    => $this->record->regNumber,
-            'LogBookFee'   => $this->record->LogBookFee,
-            'name1'        => $this->record->CustomerName,
-            'PinNo1'       => $this->record->PinNo,
-            'modeofpayment' => "POI",
-            'tel1'         => $this->record->tel,
+            'RegNumber' => $this->record->regNumber,
+            'LogBookFee' => $this->record->LogBookFee,
+            'name1' => $this->record->CustomerName,
+            'PinNo1' => $this->record->PinNo,
+            'modeofpayment' => 'POI',
+            'tel1' => $this->record->tel,
         ]);
         $logBookRequest = LogbookRequest::where('chasisNumber', $this->record->chasisNumber)
             ->first();
@@ -54,18 +53,18 @@ class LogbookInfo extends Page
 
             $this->canEdit = false;
             $this->form->fill([
-                'ChasisNumber'  => $this->record->chasisNumber,
-                'RegNumber'     => $this->record->regNumber,
-                'LogBookFee'    => $this->record->LogBookFee,
-                'name1'         => $logBookRequest?->name1 ?? $this->record->name1,
-                'tel1'          => $logBookRequest?->tel1,
-                'tel2'          => $logBookRequest?->tel2,
-                'email'         => $logBookRequest?->email,
-                'PinNo1'        => $logBookRequest?->PinNo1,
+                'ChasisNumber' => $this->record->chasisNumber,
+                'RegNumber' => $this->record->regNumber,
+                'LogBookFee' => $this->record->LogBookFee,
+                'name1' => $logBookRequest?->name1 ?? $this->record->name1,
+                'tel1' => $logBookRequest?->tel1,
+                'tel2' => $logBookRequest?->tel2,
+                'email' => $logBookRequest?->email,
+                'PinNo1' => $logBookRequest?->PinNo1,
                 'modeofpayment' => $logBookRequest?->modeofpayment,
-                'name2'         => $logBookRequest?->name2,
-                'PinNo2'        => $logBookRequest?->PinNo2,
-                'PinNo3'        => $logBookRequest?->PinNo3,
+                'name2' => $logBookRequest?->name2,
+                'PinNo2' => $logBookRequest?->PinNo2,
+                'PinNo3' => $logBookRequest?->PinNo3,
             ]);
         }
     }
@@ -181,12 +180,10 @@ class LogbookInfo extends Page
 
             $data = $this->data;
 
-
             $logBookInfo = Logbook::where('id', $this->record->logbook_id)->first();
             $logBookInfo->update([
                 'status' => LogBookStatusEnum::PROCESSING,
             ]);
-
 
             $request = LogbookRequest::firstOrCreate(
                 [
@@ -210,20 +207,17 @@ class LogbookInfo extends Page
                 ]
             );
 
-            
-
             $logoobookProfile = LogbookProfile::where('chasisNumber', $this->record->chasisNumber)->first();
-             $logoobookProfile->update([
-                   'status' => LogBookStatusEnum::PROCESSING,
-                   'applicationNumber' => $request->ntsaApplicationNumber
-               ]);
+            $logoobookProfile->update([
+                'status' => LogBookStatusEnum::PROCESSING,
+                'applicationNumber' => $request->ntsaApplicationNumber,
+            ]);
 
-            if ( $logoobookProfile->DocDate >= '2026-07-01') {
-               $request->update([
-                    'is_instant_transfer' => true
-               ]);
+            if ($logoobookProfile->DocDate >= '2026-07-01') {
+                $request->update([
+                    'is_instant_transfer' => true,
+                ]);
             }
-
 
             Notification::make()
                 ->success()

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('attachmentURL')->nullable();
             $table->longText('remarks')->nullable();
             $table->timestamp('createdOn')->nullable();
-            $table->integer('createdBy')->nullable()->comment("");
+            $table->integer('createdBy')->nullable()->comment('');
             $table->timestamp('editedOn')->nullable();
             $table->integer('editedBy')->nullable();
             $table->timestamps();

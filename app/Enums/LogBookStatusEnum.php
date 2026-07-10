@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Enums;
 
 enum LogBookStatusEnum: string
 {
-
     case PENDING = '1';
     case PROCESSING = '2';
     case PENDING_ACCEPTANCE = '3';

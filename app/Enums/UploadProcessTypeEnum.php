@@ -2,8 +2,6 @@
 
 namespace App\Enums;
 
-use function Laravel\Prompts\select;
-
 enum UploadProcessTypeEnum: string
 {
     case BULK_UPLOAD_REQUEST = '1';
@@ -11,7 +9,7 @@ enum UploadProcessTypeEnum: string
 
     case DISPATCHED = '3';
 
-    case  PENDING_REQUEST= '4';
+    case PENDING_REQUEST = '4';
 
     case PENDING_ACCEPTANCE = '5';
 
@@ -22,7 +20,6 @@ enum UploadProcessTypeEnum: string
     case DIRECT_TRANSFER_UPLOAD = '8';
 
     case SYNC_SALES = '9';
-
 
     public function label(): string
     {
@@ -66,7 +63,7 @@ enum UploadProcessTypeEnum: string
             self::ISSUES => 'heroicon-m-x-circle',
             self::DIRECT_TRANSFER_UPLOAD => 'heroicon-m-truck',
             self::SYNC_SALES => 'heroicon-m-truck',
- 
+
         };
     }
 }

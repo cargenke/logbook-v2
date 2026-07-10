@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-         Schema::create('retrieved_plates', function (Blueprint $table) {
+        Schema::create('retrieved_plates', function (Blueprint $table) {
             $table->id();
             $table->string('registration_number');
             $table->string('chassis_number')->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->json('status_history');
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('registration_number');
             $table->index('chassis_number');
         });

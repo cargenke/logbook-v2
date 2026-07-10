@@ -2,12 +2,11 @@
 
 namespace App\Exports\TemplateExports;
 
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class LogbooksPendingRequestTemplateExport implements FromCollection, WithHeadings
 {
-
     public $logbooks;
 
     public function __construct(array $logbooks)

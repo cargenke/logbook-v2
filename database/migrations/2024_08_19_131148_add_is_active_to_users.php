@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('isActive')->after('location')->default(1)->comment("0=>No,1=>Yes");
+            $table->integer('isActive')->after('location')->default(1)->comment('0=>No,1=>Yes');
         });
     }
 

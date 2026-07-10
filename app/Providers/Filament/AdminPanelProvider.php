@@ -36,11 +36,11 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-    
+
             ->navigationGroups([
                 'Logbook Management',
                 'Tickets Management',
-                'Bulk Operations'
+                'Bulk Operations',
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\LogbookProfiles\Pages;
 
 use App\Filament\Resources\LogbookProfiles\LogbookProfileResource;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -15,7 +14,7 @@ class EditLogbookProfile extends EditRecord
     {
         return [
             ViewAction::make(),
-   
+
         ];
     }
 }

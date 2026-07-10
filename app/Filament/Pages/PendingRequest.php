@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Pages;
 
 use App\Enums\UploadProcessTypeEnum;
@@ -21,8 +22,8 @@ use UnitEnum;
 
 class PendingRequest extends Page implements HasTable
 {
-
     use InteractsWithTable;
+
     protected string $view = 'filament.pages.pending-request';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowRight;
@@ -47,16 +48,16 @@ class PendingRequest extends Page implements HasTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-m-x-mark',
                         '1' => 'heroicon-m-check',
 
                     })
-                    ->formatStateUsing(fn(string $state): mixed => match ($state) {
+                    ->formatStateUsing(fn (string $state): mixed => match ($state) {
                         '0' => 'Processing',
                         '1' => 'Processed',
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'success',
                     }),
@@ -78,27 +79,24 @@ class PendingRequest extends Page implements HasTable
     {
         return [
 
+            Action::make('download')
+                ->label('Download Template')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->tooltip('Download hatching summary')
+                ->action(function () {
 
-          Action::make('download')
-            ->label('Download Template')
-            ->icon('heroicon-o-arrow-down-tray')
-            ->tooltip('Download hatching summary')
-            ->action(function () {
+                    return Excel::download(
+                        new LogbooksPendingRequestTemplateExport([[
+                            'chasis_number' => '',
+                            'reg_number' => '',
+                            'status' => '',
+                        ]]),
+                        'Direct Transfer Template.xlsx'
+                    );
 
-                return Excel::download(
-                    new LogbooksPendingRequestTemplateExport([[
-                        'chasis_number' => '',
-                        'reg_number' => '',
-                        'status' => '',
-                    ]]),
-                    'Direct Transfer Template.xlsx'
-                );
+                }),
 
-            }),
-
-
-
-          Action::make('Add New Request')
+            Action::make('Add New Request')
                 ->label('Upload File')
                 ->icon('heroicon-o-arrow-up-tray')
                 ->form([
@@ -114,13 +112,11 @@ class PendingRequest extends Page implements HasTable
                 ])
                 ->action(function (array $data) {
 
-
                     $filePath = $data['file'];
-
 
                     try {
                         $data = UploadProcessLog::create([
-                            'name' => "Request Upload",
+                            'name' => 'Request Upload',
                             'file_name' => $filePath,
                             'user_id' => auth()->id(),
                             'status' => 1, // Processing
@@ -129,15 +125,13 @@ class PendingRequest extends Page implements HasTable
                             'createdBy' => auth()->id(),
                         ]);
 
-
-
                         Notification::make()
                             ->title('Upload started successfully')
                             ->success()
                             ->send();
 
                     } catch (\Throwable $th) {
-                        Log::info("Error uploading file: " . $th->getMessage());
+                        Log::info('Error uploading file: '.$th->getMessage());
                         Notification::make()
                             ->title('Failed to start upload process')
                             ->danger()
@@ -163,10 +157,8 @@ class PendingRequest extends Page implements HasTable
             ->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
     }
 
-    
-     public static function canAccess(): bool
+    public static function canAccess(): bool
     {
         return auth()->user()->hasRole('SuperAdmin');
     }
-
 }
