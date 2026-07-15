@@ -2,11 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\LogbookActions\GetChasisInfoAction;
 use App\Enums\LogBookStatusEnum;
 use App\Mail\PendingAcceptanceNotificationMail;
+use App\Models\LogbookProfile;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 #[Signature('app:dev-command')]
@@ -19,9 +22,35 @@ class DevCommand extends Command
     public function handle()
     {
 
-        Mail::to(['carol.akinyi@cargen.com','sevanne.wesah@cargen.org'])
-            ->bcc('devops@cargen.com')
-            ->send(new PendingAcceptanceNotificationMail(LogBookStatusEnum::PENDING_ACCEPTANCE));
+        $user = Auth::loginUsingId(12);
+
+        $logbookWithoutTransferFee = LogbookProfile::where('LogBookFee', '<=', 0)
+            ->where('created_at', '>', now()->subMonths(6))
+            ->get();
+
+
+        foreach ($logbookWithoutTransferFee as $key => $logbook) {
+
+            $logbookInfo = (new GetChasisInfoAction($logbook->chasisNumber))->handle();
+
+            if (!$logbookInfo) {
+                $this->info('No info for: ' . $logbook->chasisNumber);
+                continue;
+            }
+
+            $logbook->update([
+                'transferFee' => $logbookInfo['LogBookFee'],
+            ]);
+
+            $this->comment('Updated: ' . $logbook->chasisNumber);
+        
+
+        }
+
+
+        // Mail::to(['carol.akinyi@cargen.com', 'sevanne.wesah@cargen.org'])
+        //     ->bcc('devops@cargen.com')
+        //     ->send(new PendingAcceptanceNotificationMail(LogBookStatusEnum::PENDING_ACCEPTANCE));
 
     }
 }
