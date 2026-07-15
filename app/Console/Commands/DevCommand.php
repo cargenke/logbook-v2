@@ -22,6 +22,8 @@ class DevCommand extends Command
     public function handle()
     {
 
+    
+
         $user = Auth::loginUsingId(12);
 
         $logbookWithoutTransferFee = LogbookProfile::where('LogBookFee', '<=', 0)
