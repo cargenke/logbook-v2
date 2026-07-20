@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+     'bridge' => [
+        'bridge_base_url' => env('BRIDGE_BASEURL'),
+        'bridge_username' => env('BRIDGE_USERNAME'),
+        'bridge_password' => env('BRIDGE_PASSWORD'),
+    ],
+
 ];

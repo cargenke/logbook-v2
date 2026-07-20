@@ -14,7 +14,6 @@ class BulkTaskImports implements ToCollection, WithChunkReading, WithHeadingRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            dd($row);
             $this->data[] = [
                 'chasisNumber' => $row['name'] ?? null,
                 'email' => $row['email'] ?? null,

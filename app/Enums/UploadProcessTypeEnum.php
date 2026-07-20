@@ -21,6 +21,8 @@ enum UploadProcessTypeEnum: string
 
     case SYNC_SALES = '9';
 
+    case ALLOCATION = '10';
+
     public function label(): string
     {
         return match ($this) {
@@ -33,6 +35,7 @@ enum UploadProcessTypeEnum: string
             self::ISSUES => 'Issues',
             self::DIRECT_TRANSFER_UPLOAD => 'Direct Transfer Upload',
             self::SYNC_SALES => 'Sync Sales',
+            self::ALLOCATION => 'Allocation',
         };
     }
 
@@ -48,6 +51,7 @@ enum UploadProcessTypeEnum: string
             self::ISSUES => 'danger',
             self::DISPATCHED => 'primary',
             self::SYNC_SALES => 'primary',
+            self::ALLOCATION => 'primary',
         };
     }
 
@@ -63,7 +67,7 @@ enum UploadProcessTypeEnum: string
             self::ISSUES => 'heroicon-m-x-circle',
             self::DIRECT_TRANSFER_UPLOAD => 'heroicon-m-truck',
             self::SYNC_SALES => 'heroicon-m-truck',
-
+            self::ALLOCATION => 'heroicon-m-truck',
         };
     }
 }

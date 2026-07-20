@@ -27,9 +27,9 @@ class LogbookRequestStatOverView extends StatsOverviewWidget
         
         return [
 
-            Stat::make('Processing', number_format($this->getPageTableQuery()->select('')->where('status', LogBookStatusEnum::PROCESSING->value)->count()))
+            Stat::make('Processing/WIP', number_format($this->getPageTableQuery()->select('')->whereIn('status',[LogBookStatusEnum::PENDING->value,  LogBookStatusEnum::PROCESSING->value])->count()))
                 ->descriptionIcon('heroicon-m-arrow-path-rounded-square')
-                ->description('Processing')
+                ->description('Processing/WIP')
                 ->color(LogBookStatusEnum::PROCESSING->color()),
             Stat::make('Pending Acceptance', number_format($this->getPageTableQuery()->where('status', LogBookStatusEnum::PENDING_ACCEPTANCE->value)->count()))
                 ->descriptionIcon('heroicon-m-clock')

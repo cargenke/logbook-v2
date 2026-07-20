@@ -55,6 +55,8 @@ class LogbookProfilesTable
                     ->searchable(),
 
                 TextColumn::make('regNumber')
+                
+                    ->searchable()
                     ->label('Reg Number'),
 
                 TextColumn::make('PinNo')

@@ -20,6 +20,16 @@ class LogbookRequestsTable
 
         return $table
             ->columns([
+                 TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(
+                        fn ($state) => LogBookStatusEnum::from($state)->label()
+                    )
+                    ->color(
+                        fn ($state) => LogBookStatusEnum::from($state)->color()
+                    ),
+
 
                 TextColumn::make('profile.DocDate')
                     ->date('Y-m-d')
@@ -94,13 +104,13 @@ class LogbookRequestsTable
                     ->multiple()
                     ->options(
                         collect(LogBookStatusEnum::cases())
-                            // ->whereIn('value', [LogBookStatusEnum::PROCESSING,  LogBookStatusEnum::PENDING_ACCEPTANCE, LogBookStatusEnum::WITH_ISSUES])
                             ->mapWithKeys(fn ($case) => [
                                 $case->value => $case->label(),
                             ])
                             ->toArray()
                     )
                     ->default([
+                        LogBookStatusEnum::PENDING,
                         LogBookStatusEnum::PROCESSING,
                         LogBookStatusEnum::PENDING_ACCEPTANCE,
                         LogBookStatusEnum::WITH_ISSUES,

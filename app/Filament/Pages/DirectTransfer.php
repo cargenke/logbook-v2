@@ -92,7 +92,7 @@ class DirectTransfer extends Page implements HasTable
             Action::make('download')
                 ->label('Download Template')
                 ->icon('heroicon-o-arrow-down-tray')
-                ->tooltip('Download hatching summary')
+                ->tooltip('Download Template')
                 ->action(function () {
 
                     return Excel::download(

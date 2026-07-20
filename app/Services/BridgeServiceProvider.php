@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
@@ -14,12 +13,14 @@ class BridgeServiceProvider
     public function getAccessToken()
     {
 
-        $fullUrl = env('BRIDGE_BASEURL').'/login';
-        $userName = env('BRIDGE_USERNAME');
-        $password = env('BRIDGE_PASSWORD');
+        $bridgeConfig = config('services.bridge');
+
+        $fullUrl  = $bridgeConfig['bridge_base_url'] . '/login';
+        $userName = $bridgeConfig['bridge_username'];
+        $password = $bridgeConfig['bridge_password'];
 
         $data = [
-            'email' => $userName,
+            'email'    => $userName,
             'password' => $password,
         ];
 
@@ -30,7 +31,7 @@ class BridgeServiceProvider
             ->post($fullUrl, $data);
 
         if ($response->failed()) {
-            Log::info('Failed Posting to following URL: '.$fullUrl);
+            Log::info('Failed Posting to following URL: ' . $fullUrl);
             Log::info(json_encode($response->body()));
             exit;
         }
@@ -49,7 +50,8 @@ class BridgeServiceProvider
 
         $token = $this->getAccessToken();
 
-        $fullUrl = env('BRIDGE_BASEURL').$apiUrl;
+        $bridgeConfig = config('services.bridge');
+        $fullUrl      = $bridgeConfig['bridge_base_url'] . $apiUrl;
 
         $response = Http::withoutVerifying()
             ->connectTimeout(35)
@@ -67,7 +69,7 @@ class BridgeServiceProvider
         }
 
         if ($response->failed()) {
-            Log::info('Failed Posting to following URL: '.$apiUrl);
+            Log::info('Failed Posting to following URL: ' . $apiUrl);
             Log::info(json_encode($response->body()));
         }
 
@@ -80,7 +82,7 @@ class BridgeServiceProvider
     public function postDataV2(string $apiUrl, string $token, array $data)
     {
 
-        $fullUrl = env('BRIDGE_BASEURL').$apiUrl;
+        $fullUrl = env('BRIDGE_BASEURL') . $apiUrl;
 
         $response = Http::withoutVerifying()
             ->connectTimeout(35)
@@ -88,7 +90,7 @@ class BridgeServiceProvider
             ->withToken($token)
             ->post($fullUrl, $data);
         if ($response->failed()) {
-            Log::info('Failed Posting to following URL: '.$apiUrl);
+            Log::info('Failed Posting to following URL: ' . $apiUrl);
             Log::info(json_encode($response->body()));
             throw new \ErrorException($response->body());
         }
@@ -107,7 +109,7 @@ class BridgeServiceProvider
 
         $token = Cache::get('BRIDGE_TOKEN');
 
-        $fullUrl = env('BRIDGE_BASEURL').$apiUrl;
+        $fullUrl = env('BRIDGE_BASEURL') . $apiUrl;
 
         $response = Http::withoutVerifying()
             ->connectTimeout(15)
@@ -120,7 +122,7 @@ class BridgeServiceProvider
             $response = $this->getData($apiUrl);
         }
         if ($response->failed()) {
-            Log::info('Failed Posting to following URL: '.$apiUrl);
+            Log::info('Failed Posting to following URL: ' . $apiUrl);
             Log::info(json_encode($response->body()));
         }
 
@@ -133,9 +135,7 @@ class BridgeServiceProvider
     public function getDataV2(string $apiUrl, string $token)
     {
 
-        $token = $token;
-
-        $fullUrl = env('SAP_SERVICE_LAYER_URL').$apiUrl;
+        $fullUrl = env('SAP_SERVICE_LAYER_URL') . $apiUrl;
 
         $response = Http::withoutVerifying()
             ->connectTimeout(15)
@@ -148,7 +148,7 @@ class BridgeServiceProvider
             $response = $this->getData($apiUrl);
         }
         if ($response->failed()) {
-            Log::info('Failed Posting to following URL: '.$apiUrl);
+            Log::info('Failed Posting to following URL: ' . $apiUrl);
             Log::info(json_encode($response->body()));
         }
 

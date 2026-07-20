@@ -37,19 +37,19 @@ class PendingRequest extends Page implements HasTable
         return $table
             ->query($this->getBaseQuery()) // your model here
             ->columns([
+                TextColumn::make('id')
+                    ->label('#'),
                 TextColumn::make('creator.name')
-                    ->label('Requested By')
+                    ->label('Uploaded By')
                     ->searchable(),
                 TextColumn::make('name')
-                    ->label('Chassis Number'),
-                TextColumn::make('file_name')
-                    ->label('Reg Number'),
+                    ->label('Name'),
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->icon(fn (string $state): string => match ($state) {
-                        '0' => 'heroicon-m-x-mark',
+                        '0' => 'heroicon-m-arrow-path',
                         '1' => 'heroicon-m-check',
 
                     })
@@ -82,7 +82,7 @@ class PendingRequest extends Page implements HasTable
             Action::make('download')
                 ->label('Download Template')
                 ->icon('heroicon-o-arrow-down-tray')
-                ->tooltip('Download hatching summary')
+                ->tooltip('Download Template')
                 ->action(function () {
 
                     return Excel::download(
@@ -148,13 +148,9 @@ class PendingRequest extends Page implements HasTable
     protected function getBaseQuery()
     {
 
-        if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
-            return UploadProcessLog::query()->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
-        }
-
         return UploadProcessLog::query()
-            ->where('user_id', auth()->user()->id)
-            ->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
+      
+            ->where('process_type', UploadProcessTypeEnum::PENDING_REQUEST->value);
     }
 
     public static function canAccess(): bool

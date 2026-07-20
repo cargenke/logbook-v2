@@ -4,7 +4,7 @@ namespace App\Actions\LogbookActions;
 
 use App\Services\BridgeServiceProvider;
 
-class GetChasisInfoAction
+class GetChasisStockDataAction
 {
     public function __construct(protected string $chasisNumber)
     {
@@ -19,7 +19,8 @@ class GetChasisInfoAction
         $payload = [
             'chasisNumber' => $chasisNumber,
         ];
-        $chasisInfo = (new BridgeServiceProvider)->postData('/chasis-sales-info', $payload);
+
+        $chasisInfo = (new BridgeServiceProvider)->postData('/chasis-stock-data', $payload);
 
         return $chasisInfo;
 

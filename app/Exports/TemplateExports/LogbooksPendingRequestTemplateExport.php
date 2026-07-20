@@ -22,6 +22,8 @@ class LogbooksPendingRequestTemplateExport implements FromCollection, WithHeadin
 
     public function headings(): array
     {
+
+        $this->logbooks;
         return [
             'chasis_number',
             'reg_number',

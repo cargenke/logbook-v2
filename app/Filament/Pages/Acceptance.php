@@ -39,19 +39,19 @@ class Acceptance extends Page implements HasTable
         return $table
             ->query($this->getBaseQuery()) // your model here
             ->columns([
+                TextColumn::make('id')
+                    ->label('#'),
                 TextColumn::make('creator.name')
-                    ->label('Requested By')
+                    ->label('Uploaded By')
                     ->searchable(),
                 TextColumn::make('name')
-                    ->label('Chassis Number'),
-                TextColumn::make('file_name')
-                    ->label('Reg Number'),
+                    ->label('Name'),
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->icon(fn (string $state): string => match ($state) {
-                        '0' => 'heroicon-m-x-mark',
+                        '0' => 'heroicon-m-arrow-path',
                         '1' => 'heroicon-m-check',
 
                     })
@@ -84,7 +84,7 @@ class Acceptance extends Page implements HasTable
             Action::make('download')
                 ->label('Download Template')
                 ->icon('heroicon-o-arrow-down-tray')
-                ->tooltip('Download hatching summary')
+                ->tooltip('Download Template')
                 ->action(function () {
 
                     return Excel::download(
@@ -93,13 +93,13 @@ class Acceptance extends Page implements HasTable
                             'reg_number' => '',
                             'status' => '',
                         ]]),
-                        'Direct Transfer Template.xlsx'
+                       now()->format('Y-m-d') . '-'. 'Acceptance Template.xlsx'
                     );
 
                 }),
 
             Action::make('Add New Request')
-                ->label('Upload Direct Transfer')
+                ->label('Upload Accepted Requests')
                 ->icon('heroicon-o-arrow-up-tray')
                 ->form([
 
@@ -169,7 +169,7 @@ class Acceptance extends Page implements HasTable
                     }
 
                 })
-                ->modalHeading('Upload Direct Transfer File')
+                ->modalHeading('Upload Acceptaed File')
                 ->modalSubmitActionLabel('Add Request')
                 ->modalWidth('lg'),
         ];
@@ -177,14 +177,8 @@ class Acceptance extends Page implements HasTable
 
     protected function getBaseQuery()
     {
-
-        if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
-            return UploadProcessLog::query()->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
-        }
-
         return UploadProcessLog::query()
-            ->where('user_id', auth()->user()->id)
-            ->where('process_type', UploadProcessTypeEnum::DIRECT_TRANSFER_UPLOAD->value);
+            ->where('process_type', UploadProcessTypeEnum::PENDING_ACCEPTANCE->value);
     }
 
     public static function canAccess(): bool

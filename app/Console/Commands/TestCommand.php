@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Actions\LogbookActions\GetChasisInfoAction;
+use App\Actions\LogbookActions\GetChasisStockDataAction;
 use App\Actions\LogbookActions\SyncChasisSalesDataAction;
 use App\Enums\LogBookStatusEnum;
 use App\Enums\UploadProcessTypeEnum;
@@ -30,9 +31,9 @@ class TestCommand extends Command
 
         // dd("Done");
 
-        $user = Auth::loginUsingId(12);
-        $chasis = ' MD625NF57M1C03005';
-        $chasisInfo = (new GetChasisInfoAction($chasis))->handle();
+        $user = Auth::loginUsingId(78);
+        $chasis = ' MD625AF4XE1H14919';
+        $chasisInfo = (new GetChasisStockDataAction($chasis))->handle();
 
         dd($chasisInfo);
 

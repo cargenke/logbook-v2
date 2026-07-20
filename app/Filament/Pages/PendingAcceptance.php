@@ -149,13 +149,7 @@ class PendingAcceptance extends Page implements HasTable
 
     protected function getBaseQuery()
     {
-
-        if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
-            return UploadProcessLog::query()->where('process_type', UploadProcessTypeEnum::PENDING_ACCEPTANCE->value);
-        }
-
         return UploadProcessLog::query()
-            ->where('user_id', auth()->user()->id)
             ->where('process_type', UploadProcessTypeEnum::PENDING_ACCEPTANCE->value);
     }
 

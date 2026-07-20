@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Pages;
 
 use App\Enums\UploadProcessTypeEnum;
@@ -37,27 +36,27 @@ class WithIssues extends Page implements HasTable
         return $table
             ->query($this->getBaseQuery()) // your model here
             ->columns([
+                TextColumn::make('id')
+                    ->label('#'),
                 TextColumn::make('creator.name')
-                    ->label('Requested By')
+                    ->label('Uploaded By')
                     ->searchable(),
                 TextColumn::make('name')
-                    ->label('Chassis Number'),
-                TextColumn::make('file_name')
-                    ->label('Reg Number'),
+                    ->label('Name'),
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        '0' => 'heroicon-m-x-mark',
+                    ->icon(fn(string $state): string => match ($state) {
+                        '0' => 'heroicon-m-arrow-path',
                         '1' => 'heroicon-m-check',
 
                     })
-                    ->formatStateUsing(fn (string $state): mixed => match ($state) {
+                    ->formatStateUsing(fn(string $state): mixed => match ($state) {
                         '0' => 'Processing',
                         '1' => 'Processed',
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'success',
                     }),
@@ -82,15 +81,15 @@ class WithIssues extends Page implements HasTable
             Action::make('download')
                 ->label('Download Template')
                 ->icon('heroicon-o-arrow-down-tray')
-                ->tooltip('Download hatching summary')
+                ->tooltip('Download Template')
                 ->action(function () {
 
                     return Excel::download(
                         new LogbooksPendingRequestTemplateExport([
                             [
                                 'chasis_number' => '',
-                                'reg_number' => '',
-                                'status' => '',
+                                'reg_number'    => '',
+                                'status'        => '',
                             ],
                         ]),
                         'Direct Transfer Template.xlsx'
@@ -118,13 +117,13 @@ class WithIssues extends Page implements HasTable
 
                     try {
                         $record = UploadProcessLog::create([
-                            'name' => 'Direct Transfer Upload',
-                            'file_name' => $filePath,
-                            'user_id' => auth()->id(),
-                            'status' => 0,
-                            'createdOn' => now(),
+                            'name'         => 'Direct Transfer Upload',
+                            'file_name'    => $filePath,
+                            'user_id'      => auth()->id(),
+                            'status'       => 0,
+                            'createdOn'    => now(),
                             'process_type' => UploadProcessTypeEnum::ISSUES->value,
-                            'createdBy' => auth()->id(),
+                            'createdBy'    => auth()->id(),
                         ]);
 
                         Notification::make()
@@ -134,7 +133,7 @@ class WithIssues extends Page implements HasTable
 
                     } catch (\Throwable $th) {
 
-                        Log::info('Error uploading file: '.$th);
+                        Log::info('Error uploading file: ' . $th);
                         Notification::make()
                             ->title('Adding New Request Failed')
                             ->danger()

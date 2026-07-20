@@ -5,7 +5,8 @@ namespace App\Filament\Pages;
 use App\Actions\LogbookActions\GetChasisInfoAction;
 use App\Actions\LogbookActions\UpdateLogbookInfoAction;
 use App\Enums\UploadProcessTypeEnum;
-use App\Exports\TemplateExports\DispatchedLogbooksTemplateExport;
+use App\Exports\TemplateExports\AllUploadTemplateExport;
+use App\Exports\TemplateExports\LogbooksPendingRequestTemplateExport;
 use App\Models\UploadProcessLog;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -22,38 +23,36 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use UnitEnum;
 
-class Dispatch extends Page implements HasTable
+class Allocation extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected string $view = 'filament.pages.dispatches';
+    protected string $view = 'filament.pages.allocation';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowRight;
 
-    protected static ?string $navigationLabel = 'Dispatches';
-
     protected static string|UnitEnum|null $navigationGroup = 'Bulk Operations';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 8;
 
     public function table(Table $table): Table
     {
         return $table
             ->query($this->getBaseQuery()) // your model here
             ->columns([
-                TextColumn::make('id')
-                    ->label('#'),
                 TextColumn::make('creator.name')
-                    ->label('Uploaded By')
+                    ->label('Requested By')
                     ->searchable(),
                 TextColumn::make('name')
-                    ->label('Name'),
+                    ->label('Chassis Number'),
+                TextColumn::make('file_name')
+                    ->label('Reg Number'),
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->icon(fn(string $state): string => match ($state) {
-                        '0' => 'heroicon-m-arrow-path',
+                        '0' => 'heroicon-m-x-mark',
                         '1' => 'heroicon-m-check',
 
                     })
@@ -65,6 +64,7 @@ class Dispatch extends Page implements HasTable
                         '0' => 'danger',
                         '1' => 'success',
                     }),
+
             ])
             ->defaultSort('id', 'desc')
             ->filters([
@@ -89,14 +89,19 @@ class Dispatch extends Page implements HasTable
                 ->action(function () {
 
                     return Excel::download(
-                        new DispatchedLogbooksTemplateExport,
-                        now()->format('Y-m-d_H-i-s') . 'Dispatched Logbooks Template.xlsx'
+                        new AllUploadTemplateExport([
+                            [
+                                'chasis_number' => '',
+                                'reg_number' => '',
+                            ]
+                        ]),
+                        now()->format('Y-m-d') . '-Allocation Template.xlsx'
                     );
 
                 }),
 
             Action::make('Add New Request')
-                ->label('Upload Dispatch')
+                ->label('Upload Allocation')
                 ->icon('heroicon-o-arrow-up-tray')
                 ->form([
 
@@ -123,7 +128,7 @@ class Dispatch extends Page implements HasTable
                             'user_id' => auth()->id(),
                             'status' => 0,
                             'createdOn' => now(),
-                            'process_type' => UploadProcessTypeEnum::DISPATCHED->value,
+                            'process_type' => UploadProcessTypeEnum::ALLOCATION->value,
                             'createdBy' => auth()->id(),
                         ]);
 
@@ -166,7 +171,7 @@ class Dispatch extends Page implements HasTable
                     }
 
                 })
-                ->modalHeading('Upload Bulk File')
+                ->modalHeading('Upload Allocation File')
                 ->modalSubmitActionLabel('Add Request')
                 ->modalWidth('lg'),
         ];
@@ -175,18 +180,14 @@ class Dispatch extends Page implements HasTable
     protected function getBaseQuery()
     {
 
-        if (auth()->user()?->hasAnyRole(['SuperAdmin'])) {
-            return UploadProcessLog::query()->where('process_type', UploadProcessTypeEnum::DISPATCHED->value);
-        }
 
         return UploadProcessLog::query()
-            ->where('user_id', auth()->user()->id)
-            ->where('process_type', UploadProcessTypeEnum::DISPATCHED->value);
+
+            ->where('process_type', UploadProcessTypeEnum::ALLOCATION->value);
     }
 
     public static function canAccess(): bool
     {
-
         return auth()->user()->hasRole('SuperAdmin');
     }
 }
