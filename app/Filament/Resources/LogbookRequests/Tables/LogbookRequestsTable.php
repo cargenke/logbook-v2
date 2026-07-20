@@ -3,12 +3,16 @@
 namespace App\Filament\Resources\LogbookRequests\Tables;
 
 use App\Enums\LogBookStatusEnum;
+use Carbon\Carbon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class LogbookRequestsTable
 {
@@ -29,6 +33,10 @@ class LogbookRequestsTable
                     ->color(
                         fn($state) => LogBookStatusEnum::from($state)->color()
                     ),
+
+                   TextColumn::make('createdOn')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
 
 
                 TextColumn::make('profile.DocDate')
@@ -84,10 +92,7 @@ class LogbookRequestsTable
 
                 TextColumn::make('user.name')
                     ->label('Requested By'),
-                TextColumn::make('createdOn')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
+             
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -124,6 +129,38 @@ class LogbookRequestsTable
                         $query->whereHas('profile', function ($q) use ($data) {
                             $q->whereIn('status', $data['values']);
                         });
+                    }),
+                    
+                 Filter::make('created_at')
+                    ->schema([
+                        DatePicker::make('created_from')
+
+                            ->placeholder(fn($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                        DatePicker::make('created_until')
+
+                            ->placeholder(fn($state): string => now()->format('M d, Y')),
+                    ])->columns(2)
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'] ?? null,
+                                fn(Builder $query, $date): Builder => $query->whereDate('createdOn', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'] ?? null,
+                                fn(Builder $query, $date): Builder => $query->whereDate('createdOn', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Requested From ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Requested To ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
                     }),
             ])
             ->recordActions([
