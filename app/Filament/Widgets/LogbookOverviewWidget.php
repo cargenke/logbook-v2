@@ -36,22 +36,34 @@ class LogbookOverviewWidget extends StatsOverviewWidget
                 ->url(route('filament.admin.resources.logbook-profiles.index', [
                     'filters[Status][values][0]' => LogBookStatusEnum::PENDING_ACCEPTANCE->value
                 ]))
-                 ->openUrlInNewTab()
+                ->openUrlInNewTab()
                 ->description('Pending Acceptance')
                 ->color(LogBookStatusEnum::PENDING_ACCEPTANCE->color()),
             Stat::make('With Issues', number_format(LogbookProfile::where('status', LogBookStatusEnum::WITH_ISSUES->value)->count()))
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->description('With Issues')
+                ->url(route('filament.admin.resources.logbook-profiles.index', [
+                    'filters[Status][values][0]' => LogBookStatusEnum::WITH_ISSUES->value
+                ]))
+                ->openUrlInNewTab()
                 ->color(LogBookStatusEnum::WITH_ISSUES->color()),
 
             Stat::make('Direct Trasfer', number_format(LogbookProfile::where('status', LogBookStatusEnum::DIRECT_REGISTRATION->value)->count()))
                 ->descriptionIcon('heroicon-m-arrow-right')
                 ->description('Direct Trasfer')
+                ->url(route('filament.admin.resources.logbook-profiles.index', [
+                    'filters[Status][values][0]' => LogBookStatusEnum::DIRECT_REGISTRATION->value
+                ]))
+                ->openUrlInNewTab()
                 ->color(LogBookStatusEnum::DIRECT_REGISTRATION->color()),
 
-                  Stat::make('Dispatched', number_format(LogbookProfile::where('status', LogBookStatusEnum::DISPATCHED->value)->count()))
+            Stat::make('Dispatched', number_format(LogbookProfile::where('status', LogBookStatusEnum::DISPATCHED->value)->count()))
                 ->descriptionIcon('heroicon-m-arrow-right')
                 ->description('Direct Trasfer')
+                ->url(route('filament.admin.resources.logbook-profiles.index', [
+                    'filters[Status][values][0]' => LogBookStatusEnum::DISPATCHED->value
+                ]))
+                ->openUrlInNewTab()
                 ->color(LogBookStatusEnum::DISPATCHED->color()),
         ];
     }
