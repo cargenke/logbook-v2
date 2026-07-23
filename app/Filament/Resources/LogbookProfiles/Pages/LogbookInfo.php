@@ -202,7 +202,7 @@ class LogbookInfo extends Page
                     'PinNo2' => $data['PinNo2'],
                     'PinNo3' => $data['PinNo3'],
                     'createdOn' => Carbon::now(),
-                    'status' => 1,
+                    'status' => LogBookStatusEnum::PROCESSING,
                     'createdBy' => Auth::user()->id,
                 ]
             );

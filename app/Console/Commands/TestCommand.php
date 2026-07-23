@@ -2,17 +2,19 @@
 
 namespace App\Console\Commands;
 
-use App\Actions\LogbookActions\GetChasisInfoAction;
+
 use App\Actions\LogbookActions\GetChasisStockDataAction;
 use App\Actions\LogbookActions\SyncChasisSalesDataAction;
 use App\Enums\LogBookStatusEnum;
 use App\Enums\UploadProcessTypeEnum;
 use App\Models\LogbookProfile;
+use App\Models\LogbookRequest;
 use App\Models\UploadProcessLog;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 #[Signature('app:test')]
@@ -24,6 +26,22 @@ class TestCommand extends Command
      */
     public function handle()
     {
+
+        LogbookRequest::with('profile')
+            ->whereNull('status')
+            ->get()
+            ->each(function (LogbookRequest $request) {
+                Log::info($request->chasisNumber);
+                if ($request->profile) {
+                    $request->update([
+                        'status' => $request->profile->status,
+                    ]);
+                }
+            });
+
+
+
+        dd("Done");
 
         // $uploadProcessLog = UploadProcessLog::findOrFail(1530);
 

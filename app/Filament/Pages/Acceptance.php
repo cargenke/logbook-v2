@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Actions\LogbookActions\GetChasisInfoAction;
 use App\Actions\LogbookActions\UpdateLogbookInfoAction;
 use App\Enums\UploadProcessTypeEnum;
+use App\Exports\TemplateExports\AllUploadTemplateExport;
 use App\Exports\TemplateExports\LogbooksPendingRequestTemplateExport;
 use App\Models\UploadProcessLog;
 use BackedEnum;
@@ -88,7 +89,7 @@ class Acceptance extends Page implements HasTable
                 ->action(function () {
 
                     return Excel::download(
-                        new LogbooksPendingRequestTemplateExport([[
+                        new AllUploadTemplateExport([[
                             'chasis_number' => '',
                             'reg_number' => '',
                             'status' => '',

@@ -5,13 +5,14 @@ namespace App\Filament\Resources\LogbookRequests\Schemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class LogbookRequestForm
 {
     public static function configure(Schema $schema): Schema
     {
 
-        $canEdit = false;
+          $canEdit = fn (?Model $record) => ! $record?->isClosed;
 
         return $schema
             ->components([
@@ -23,12 +24,12 @@ class LogbookRequestForm
                         Section::make('Logbook Profile')
                             ->schema([
                                 TextInput::make('chasisNumber')
-                                    ->readOnly(! $canEdit)
+                                    ->readOnly()
                                     ->label('Chasis Number')
                                     ->required(),
 
                                 TextInput::make('regNumber')
-                                    ->readOnly(! $canEdit)
+                                    ->readOnly()
                                     ->label('Reg Number')
                                     ->required(),
 

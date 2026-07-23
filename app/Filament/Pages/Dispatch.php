@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Actions\LogbookActions\GetChasisInfoAction;
 use App\Actions\LogbookActions\UpdateLogbookInfoAction;
 use App\Enums\UploadProcessTypeEnum;
+use App\Exports\TemplateExports\AllUploadTemplateExport;
 use App\Exports\TemplateExports\DispatchedLogbooksTemplateExport;
 use App\Models\UploadProcessLog;
 use BackedEnum;
@@ -89,7 +90,14 @@ class Dispatch extends Page implements HasTable
                 ->action(function () {
 
                     return Excel::download(
-                        new DispatchedLogbooksTemplateExport,
+                         new AllUploadTemplateExport([[
+                            'chasis_number' => '',
+                            'reg_number' => '',
+                            'dispatched_date' => '',
+                            'dispatched_to' => '',
+                            'year' => '',
+                            'status' => '',
+                        ]]),
                         now()->format('Y-m-d_H-i-s') . 'Dispatched Logbooks Template.xlsx'
                     );
 
