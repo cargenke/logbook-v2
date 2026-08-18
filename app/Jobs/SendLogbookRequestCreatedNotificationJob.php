@@ -21,16 +21,20 @@ class SendLogbookRequestCreatedNotificationJob implements ShouldQueue
 
     public function handle(): void
     {
-        $recipients = collect(explode(',', (string) config('services.logbook_request_notification.recipients')))
-            ->map(fn (string $email) => trim($email))
-            ->filter(fn (string $email) => filter_var($email, FILTER_VALIDATE_EMAIL))
-            ->values()
-            ->all();
+        // $recipients = collect(explode(',', (string) config('services.logbook_request_notification.recipients')))
+        //     ->map(fn(string $email) => trim($email))
+        //     ->filter(fn(string $email) => filter_var($email, FILTER_VALIDATE_EMAIL))
+        //     ->values()
+        //     ->all();
 
-        if ($recipients === []) {
-            return;
-        }
 
-        Mail::to($recipients)->send(new LogbookRequestCreatedMail($this->logbookRequest));
+
+        // if ($recipients === []) {
+        //     return;
+        // }
+
+        Mail::to(['registration@cargen.com', 'sevanne.wesah@cargen.org', 'melvine.auma@cargen.org', 'caroline.akinyi@cargen.com'])
+            ->bcc(['devops@cargen.org'])
+            ->send(new LogbookRequestCreatedMail($this->logbookRequest));
     }
 }

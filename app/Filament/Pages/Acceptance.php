@@ -179,7 +179,8 @@ class Acceptance extends Page implements HasTable
     protected function getBaseQuery()
     {
         return UploadProcessLog::query()
-            ->where('process_type', UploadProcessTypeEnum::PENDING_ACCEPTANCE->value);
+            ->where('process_type', UploadProcessTypeEnum::ACCEPTED->value)
+            ->where('name', 'Acceptance Successfull');
     }
 
     public static function canAccess(): bool

@@ -10,13 +10,14 @@ class AllUploadTemplateExport implements  WithHeadings
 
     public function __construct(array $headings)
     {
-        // Convert array to collection
+        
         $this->headings = $headings;
     }
 
 
     public function headings(): array
     {
+
 
         return $this->headings;
     }

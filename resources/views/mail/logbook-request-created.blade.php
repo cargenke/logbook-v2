@@ -5,7 +5,6 @@ A new logbook transfer request has been created.
 
 | Field | Value |
 | :--- | :--- |
-| Application number | {{ $logbookRequest->ntsaApplicationNumber ?? 'N/A' }} |
 | Chassis number | {{ $logbookRequest->chasisNumber ?? 'N/A' }} |
 | Registration number | {{ $logbookRequest->regNumber ?? 'N/A' }} |
 | First owner | {{ $logbookRequest->name1 ?? 'N/A' }} |

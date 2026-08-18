@@ -29,18 +29,32 @@ class TestCommand extends Command
     public function handle()
     {
 
-    $logbookRequest = LogbookRequest::where('id', '62365')->first();
+      
+          $logbookRequest = LogbookRequest::where('id', '62419')->first();
 
 
 
-    SendLogbookRequestCreatedNotificationJob::dispatch($logbookRequest);
+        SendLogbookRequestCreatedNotificationJob::dispatch($logbookRequest);
 
-    dd("Done");
+        dd("Done");
+
+        dd("Done");
+
+
+        UploadProcessLog::query()
+            ->where('process_type', UploadProcessTypeEnum::PENDING_ACCEPTANCE->value)
+            ->orWhere('name', 'Pending Acceptance Upload')->update([
+                    'process_type' => UploadProcessTypeEnum::PENDING_ACCEPTANCE->value,
+                    'status' => 1
+                ]);
+
+        dd("Done");
 
       
 
 
-        $uploadProcessLog = UploadProcessLog::findOrFail(3259);
+
+        $uploadProcessLog = UploadProcessLog::findOrFail(3290);
 
         (new ProcessLogbookPendingAcceptanceImportJob($uploadProcessLog))->handle();
 
